@@ -32,6 +32,7 @@ guide/                       指南
 ├─ typescript.md             TypeScript
 └─ in-depth/                 深入（渲染机制/响应式原理/渲染函数）
 api/                         API 参考（响应式/应用/组合式/内置组件/渲染函数/SSR/路由/类型）
+examples/                    示例（基础/组件/进阶，共 10 个可运行示例）
 public/                      静态资源
 plan.md                      实施计划（不作为站点页面）
 ```
