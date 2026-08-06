@@ -14,10 +14,10 @@
 
 ```bash
 # 交互式创建（询问项目名与目标文件夹）
-npm create @actview/cli
+npm create @actview/cli@latest
 
 # 或直接指定项目名，非交互创建
-npm create @actview/cli my-app
+npm create @actview/cli@latest my-app
 ```
 
 也可以全局安装后使用 `actview` 命令：

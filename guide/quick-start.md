@@ -12,10 +12,10 @@ description: 从零搭建一个 ActView 应用，编写你的第一个响应式�
 
 ```bash
 # 无需先安装，直接运行（交互式询问项目名与文件夹）
-npm create @actview/cli
+npm create @actview/cli@latest
 
 # 或直接指定项目名，非交互创建
-npm create @actview/cli my-app
+npm create @actview/cli@latest my-app
 ```
 
 也可以全局安装后使用 `actview` 命令：

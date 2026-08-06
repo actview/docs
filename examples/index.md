@@ -32,5 +32,5 @@ description: ActView 示例集合：从计数器到路由标签页，全部可�
 | [主题切换](./toggle-theme) | 类样式绑定 + `Transition` 过渡 |
 
 ::: tip 如何运行
-所有示例基于同一个工程骨架：先用官方脚手架创建（`npm create @actview/cli`），再按示例替换 `src/App.tsx` 等文件即可；也可手动搭建（详见 [快速上手](../guide/quick-start)）。
+所有示例基于同一个工程骨架：先用官方脚手架创建（`npm create @actview/cli@latest`），再按示例替换 `src/App.tsx` 等文件即可；也可手动搭建（详见 [快速上手](../guide/quick-start)）。
 :::
