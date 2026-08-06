@@ -18,7 +18,8 @@ export default defineConfig({
 
     sidebar: {
       '/guide/': { base: '/guide/', items: sidebarGuide() },
-      '/api/': { base: '/api/', items: sidebarApi() }
+      '/api/': { base: '/api/', items: sidebarApi() },
+      '/examples/': { base: '/examples/', items: sidebarExamples() }
     },
 
     socialLinks: [{ icon: 'github', link: 'https://github.com/ALiuYiLin/JSX-Demo' }],
@@ -54,6 +55,7 @@ export default defineConfig({
 function nav(): DefaultTheme.NavItem[] {
   return [
     { text: '指南', link: '/guide/introduction', activeMatch: '/guide/' },
+    { text: '示例', link: '/examples/', activeMatch: '/examples/' },
     { text: 'API 参考', link: '/api/reactivity-core', activeMatch: '/api/' }
   ]
 }
@@ -140,6 +142,40 @@ function sidebarApi(): DefaultTheme.SidebarItem[] {
         { text: '服务端渲染', link: 'ssr' },
         { text: '路由', link: 'router' },
         { text: '类型参考', link: 'utility-types' }
+      ]
+    }
+  ]
+}
+
+function sidebarExamples(): DefaultTheme.SidebarItem[] {
+  return [
+    { text: '示例总览', link: 'index' },
+    {
+      text: '基础',
+      collapsed: false,
+      items: [
+        { text: '计数器', link: 'counter' },
+        { text: '温度转换', link: 'temperature-converter' },
+        { text: '待办清单', link: 'todo-list' },
+        { text: '搜索过滤', link: 'search-filter' }
+      ]
+    },
+    {
+      text: '组件',
+      collapsed: false,
+      items: [
+        { text: '组件与 Props', link: 'component-props' },
+        { text: '插槽面板', link: 'slot-panel' }
+      ]
+    },
+    {
+      text: '进阶',
+      collapsed: false,
+      items: [
+        { text: '异步加载', link: 'async-loading' },
+        { text: '路由标签页', link: 'router-tabs' },
+        { text: '秒表', link: 'stopwatch' },
+        { text: '主题切换', link: 'toggle-theme' }
       ]
     }
   ]
