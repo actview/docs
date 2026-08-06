@@ -140,5 +140,5 @@ CSS 变量需要断言：
 
 ## 下一步
 
-- [快速上手](../quick-start)：完整工程配置
-- [组件基础](../components/component-basics)：组件与 props
+- [快速上手](./quick-start)：完整工程配置
+- [组件基础](./components/component-basics)：组件与 props
