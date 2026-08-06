@@ -8,15 +8,63 @@
 - **框架**：ActView（`actview` / `@actview/core` / `@actview/jsx` / `@actview/router` / `@actview/plugin`）
 - **包管理**：pnpm
 
-## 快速开始
+## 快速创建 ActView 项目
 
-创建 ActView 项目请使用官方脚手架 [`@actview/create-cli`](https://github.com/ALiuYiLin/actview-cli)：
+使用官方脚手架 **`@actview/create-cli`**，一条命令生成 TypeScript + Vite + ActView 最小可运行项目：
 
 ```bash
+# 交互式创建（询问项目名与目标文件夹）
+npm create @actview/cli
+
+# 或直接指定项目名，非交互创建
 npm create @actview/cli my-app
 ```
 
-本仓库为 ActView 官方文档站：
+也可以全局安装后使用 `actview` 命令：
+
+```bash
+npm install -g @actview/create-cli
+actview my-app            # 在当前目录下创建 my-app/
+actview create my-app     # 同上（create 子命令写法）
+```
+
+常用选项：
+
+| 选项 | 说明 |
+| --- | --- |
+| `--target-dir <目录>` | 指定父目录（绝对或相对路径），跳过文件夹交互 |
+| `-f, --force` | 目标目录已存在且非空时强制覆盖 |
+| `-h, --help` / `-v, --version` | 显示帮助 / 版本 |
+
+生成的项目结构：
+
+```
+my-app/
+├── index.html              # 入口 HTML（#app 挂载点）
+├── vite.config.ts          # vite + actviewPlugin
+├── tsconfig.json           # 三段式 tsconfig 入口
+├── package.json            # build: tsc -b && vite build
+└── src/
+    ├── main.tsx            # createApp(App).mount('#app')
+    ├── App.tsx             # 根组件
+    ├── style.css           # 全局样式（深浅色主题）
+    └── components/
+        └── Counter.tsx     # 示例组件：ref / computed / 事件
+```
+
+进入目录即可开始开发：
+
+```bash
+cd my-app
+npm install        # 或 pnpm install / yarn
+npm run dev        # http://localhost:5173
+```
+
+更多细节见指南 [快速上手](guide/quick-start)。
+
+## 文档站开发
+
+本仓库为 ActView 官方文档站，构建基于 ActPress（`@actview/press`）：
 
 ```bash
 pnpm install
