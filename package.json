@@ -1,0 +1,24 @@
+{
+  "name": "actview-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "actview-press dev",
+    "build": "actview-press build",
+    "preview": "actview-press preview"
+  },
+  "devDependencies": {
+    "@actview/core": "^1.0.18",
+    "@actview/jsx": "^1.0.11",
+    "@actview/plugin": "^1.0.7",
+    "@actview/press": "file:C:/code/vitepress",
+    "@actview/router": "^1.0.10",
+    "actview": "^1.0.17"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
+  "packageManager": "pnpm@11.0.9"
+}
