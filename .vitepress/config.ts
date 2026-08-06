@@ -7,6 +7,9 @@ export default defineConfig({
   // plan.md 是项目计划文档，不作为站点页面编译
   srcExclude: ['plan.md'],
 
+  // 文档按阶段渐进编写，开发期放行指向未完成页面的链接；收尾阶段全量校验
+  ignoreDeadLinks: true,
+
   lastUpdated: true,
   cleanUrls: true,
 
