@@ -1,0 +1,67 @@
+---
+description: 组件与 Props 示例：父子通信与受控输入。
+---
+
+# 组件与 Props {#component-props}
+
+演示组件的核心交互：父组件通过 props 传数据，子组件通过**回调 props** 上报事件（ActView 没有独立的 `emit` 机制）。
+
+## 代码
+
+::: code-group
+
+```tsx [src/Greeting.tsx]
+export function Greeting(props: { name: string; onReset: () => void }) {
+  return (
+    <div style={{ padding: '12px', background: '#f1f5f9', borderRadius: '6px' }}>
+      <p style={{ margin: 0 }}>你好，<strong>{props.name}</strong>！</p>
+      <button onclick={props.onReset}>重置</button>
+    </div>
+  )
+}
+```
+
+```tsx [src/App.tsx]
+import { ref } from 'actview'
+import { Greeting } from './Greeting'
+
+export function App() {
+  const name = ref('ActView')
+
+  return (
+    <div style={{ fontFamily: 'system-ui, sans-serif' }}>
+      <h1>组件与 Props</h1>
+
+      <input
+        value={name.value}
+        oninput={(e) => (name.value = e.target.value)}
+        placeholder="输入名字…"
+      />
+
+      {/* props：name 传数据，onReset 传回调 */}
+      <Greeting name={name.value} onReset={() => (name.value = 'ActView')} />
+    </div>
+  )
+}
+```
+
+```tsx [src/main.tsx]
+import { createApp } from 'actview'
+import { App } from './App'
+
+createApp(App).mount('#app')
+```
+
+:::
+
+## 要点
+
+- `setup` 只执行一次：父组件 `name` 变化时，渲染器增量更新 props 并调度子组件更新，**不会重建子组件**；
+- 事件就是回调 props：`onReset` 由子组件在合适时机调用，数据流始终单向；
+- props 遵循单向数据流，子组件不要直接修改 `props.name`。
+
+## 相关文档
+
+- [组件基础](../guide/components/component-basics)：setup + render 模型
+- [Props](../guide/components/props)：传参与更新机制
+- [组件事件](../guide/components/events)：回调 props 通信
