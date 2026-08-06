@@ -36,16 +36,8 @@ jobs:
           node-version: 22
           cache: pnpm
 
-      # CI 环境没有本地 file: 依赖（C:\code\vitepress），
-      # 改用 npm registry 上发布的 @actview/press；
-      # --no-frozen-lockfile：lockfile 中 @actview/press 是 file: 引用，需重新解析
-      - name: Switch @actview/press to npm registry
-        run: |
-          sed -i 's#"@actview/press": "file:C:/code/vitepress"#"@actview/press": "^1.0.1"#' package.json
-          grep '"@actview/press"' package.json
-
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install
 
       - name: Build
         run: pnpm build
