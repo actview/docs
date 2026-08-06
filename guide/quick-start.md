@@ -8,18 +8,70 @@ description: 从零搭建一个 ActView 应用，编写你的第一个响应式�
 
 ## 创建项目
 
-用 Vite 创建一个全新的项目（选择 **vanilla-ts** 模板）：
+推荐使用官方脚手架 **`@actview/create-cli`**，一条命令生成 TypeScript + Vite + ActView 最小可运行项目：
 
 ```bash
-pnpm create vite my-actview-app --template vanilla-ts
-cd my-actview-app
+# 无需先安装，直接运行（交互式询问项目名与文件夹）
+npm create @actview/cli
+
+# 或直接指定项目名，非交互创建
+npm create @actview/cli my-app
 ```
 
-::: tip 为什么用 Vite？
-ActView 的编译插件（`actviewPlugin`）是一个 Vite 插件，负责在构建时把函数组件改写为 `defineComponent` 产物。配合 Vite 的 esbuild 自动 JSX 转换，开箱即用。
+也可以全局安装后使用 `actview` 命令：
+
+```bash
+npm install -g @actview/create-cli
+actview my-app
+```
+
+生成的 `my-app/` 结构（与 create-vite 的 `template-vue-ts` 对齐，三段式 tsconfig）：
+
+```
+my-app/
+├── index.html              # 入口 HTML（favicon + #app 挂载点）
+├── vite.config.ts          # vite + actviewPlugin
+├── tsconfig.json           # 三段式 tsconfig 入口（app + node 引用）
+├── tsconfig.app.json       # src/ 类型配置（JSX → @actview/jsx）
+├── tsconfig.node.json      # vite.config.ts 类型配置
+├── package.json            # build: tsc -b && vite build
+├── public/
+│   └── favicon.svg
+└── src/
+    ├── main.tsx            # createApp(App).mount('#app')
+    ├── App.tsx             # 根组件（布局）
+    ├── style.css           # 全局样式（深浅色主题）
+    ├── assets/
+    │   └── actview.svg
+    └── components/
+        └── Counter.tsx     # 示例组件：ref / computed / 事件
+```
+
+常用选项：
+
+| 选项 | 说明 |
+| --- | --- |
+| `--target-dir <目录>` | 指定父目录（绝对或相对路径），跳过文件夹交互 |
+| `-f, --force` | 目标目录已存在且非空时强制覆盖 |
+| `-h, --help` / `-v, --version` | 显示帮助 / 版本 |
+
+启动项目：
+
+```bash
+cd my-app
+npm install        # 或 pnpm install / yarn
+npm run dev        # http://localhost:5173
+```
+
+::: tip 手动创建（可选）
+也可以用 Vite 手动搭建：`pnpm create vite my-actview-app --template vanilla-ts`，再按下面「安装依赖」与「配置构建工具」两步配置。脚手架生成的项目已内置这些配置，使用脚手架时可跳过以下两节。
+
+ActView 的编译插件（`actviewPlugin`）是 Vite 插件，负责在构建时把函数组件改写为 `defineComponent` 产物；配合 Vite 的 esbuild 自动 JSX 转换，开箱即用。
 :::
 
-## 安装依赖
+## 安装依赖（手动创建）
+
+> 使用脚手架的读者可跳过本节与下一节——生成的项目已配置好依赖与构建工具。
 
 ```bash
 pnpm add actview @actview/plugin @actview/jsx @actview/router
@@ -32,7 +84,7 @@ pnpm add actview @actview/plugin @actview/jsx @actview/router
 | `@actview/jsx` | JSX 运行时与全局 JSX 类型 |
 | `@actview/router` | 路由（可选，需要时再装） |
 
-## 配置构建工具
+## 配置构建工具（手动创建）
 
 ### `vite.config.ts`
 

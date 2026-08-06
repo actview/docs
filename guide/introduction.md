@@ -90,6 +90,7 @@ ActView 刻意**没有**以下 Vue 特性，遇到时请改用 JSX 等价写法�
 | `@actview/jsx` | JSX 运行时与全局类型（`jsx` / `jsxs` / `createElement` / `Fragment`） |
 | `@actview/router` | 响应式路由 |
 | `@actview/plugin` | 编译期插件（`actviewPlugin` vite 插件 / `defineComponentPlugin` Babel 插件） |
+| `@actview/create-cli` | 脚手架工具：一条命令创建 TypeScript + Vite + ActView 项目 |
 
 ## 现在开始
 

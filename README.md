@@ -10,6 +10,14 @@
 
 ## 快速开始
 
+创建 ActView 项目请使用官方脚手架 [`@actview/create-cli`](https://github.com/ALiuYiLin/actview-cli)：
+
+```bash
+npm create @actview/cli my-app
+```
+
+本仓库为 ActView 官方文档站：
+
 ```bash
 pnpm install
 pnpm dev      # 本地开发（http://localhost:5173）
