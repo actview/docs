@@ -4,14 +4,66 @@ description: 认识 ActView —— 一个轻量级、响应式驱动的 JSX 前�
 
 # 什么是 ActView？ {#what-is-actview}
 
-ActView 是一个**轻量级、响应式驱动的 JSX 前端框架**。它把 Vue 风格的响应式系统（`ref` / `reactive` / `computed` / `watch`）与 React 风格的 JSX 组件模型结合起来：
+ActView 是一个**轻量级、响应式驱动的 JSX 前端框架**。
 
-- 没有模板编译器、没有 `{{ }}` 插值、没有 `v-*` 指令；
-- 组件就是返回 JSX 的函数，配合 `defineComponent` 获得 **setup + render** 的二分结构；
-- 数据变化时，组件内部由响应式 effect 自动驱动「重新渲染 + 虚拟 DOM diff」，无需任何手动订阅。
+它的名字由两个生态交汇而来：
 
-> 一句话概括核心设计：**组件 = 响应式 effect 包裹的一个 `render()` 函数**。
-> `render()` 负责把响应式数据读出来生成 VNode，effect 负责在数据变化时自动重跑 `render + patch`。响应式系统管「何时重跑」，diff 管「怎么最小化更新 DOM」。
+- **Act** —— 取自 **React** 的后三个字母。ActView 继承了 React 的 JSX 写法：灵活自由，不需要记忆 `v-if`、`v-for`、`v-model` 等大量模板指令，条件、循环、事件绑定都可以直接用**原生 JavaScript 表达式**完成；
+- **View** —— 与 **Vue** 的发音相近。ActView 继承了 Vue 的响应式系统：`ref` / `reactive` / `computed` / `watch` 等，数据变化自动驱动视图更新；相比 React 的 `useEffect` 等 API，更容易理解，简单、直观。
+
+
+下面是一个最基本的示例：
+
+```tsx
+import { ref, createApp } from 'actview'
+function App() {
+  const count = ref(0)
+  return (
+    <button onclick={() => count.value++}>
+      {count.value}
+    </button>
+  )
+}
+createApp(App).mount("#app")
+
+```
+
+结果展示：
+
+<script lang="tsx">
+import { ref } from 'actview'
+function Counter() {
+  const count = ref(0)
+  return (
+    <button class="counter-btn" onclick={() => count.value++}>
+      {count.value}
+    </button>
+  )
+}
+</script>
+
+<Counter />
+
+<style>
+.counter-btn {
+  padding: 8px 20px;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  background: #42b883;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(66, 184, 131, 0.4);
+}
+.counter-btn:hover {
+  background: #33a06f;
+}
+</style>
+
+上面的示例展示了 ActView 的两个核心功能：
+
+- **JSX 声明式渲染**：ActView 使用 JSX 来描述 UI 与状态之间的关系——没有模板语法、没有 `{{ }}` 插值，条件、循环、事件绑定都是**原生 JavaScript 表达式**，灵活且类型安全；
+- **响应性**：ActView 的 `ref` / `reactive` / `computed` / `watch` 等 API 会自动跟踪 JavaScript 状态，并在其发生变化时响应式地更新 DOM。
 
 ## 核心特性
 
@@ -31,12 +83,24 @@ ActView 是一个**轻量级、响应式驱动的 JSX 前端框架**。它把 Vu
 ```tsx
 // 你写的源码
 function App() {
-  return <div>hello</div>
+  const count = ref(0) // setup 只在组件挂载时执行一次
+  return (
+    <button onclick={() => count.value++}>
+      {count.value}
+    </button>
+  )
 }
 
 // 构建后的产物（示意）
 const App = defineComponent(function () {
-  return () => <div>hello</div>
+  const count = ref(0) // setup 只在组件挂载时执行一次
+
+  // return render
+  return () => (
+    <button onclick={() => count.value++}>
+      {count.value}
+    </button>
+  )
 })
 ```
 

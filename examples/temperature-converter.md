@@ -13,16 +13,16 @@ description: 温度转换示例：computed 双向换算摄氏与华氏。
 <script lang="tsx">
 import { ref, computed } from 'actview'
 
-const celsius = ref(20)
-// 可写 computed：读华氏走 get，改华氏走 set 反写摄氏
-const fahrenheit = computed({
-  get: () => Math.round((celsius.value * 9) / 5 + 32),
-  set: (v) => {
-    celsius.value = Number.isNaN(v) ? 0 : ((v - 32) * 5) / 9
-  }
-})
-
 export function TemperatureDemo() {
+  const celsius = ref(20)
+  // 可写 computed：读华氏走 get，改华氏走 set 反写摄氏
+  const fahrenheit = computed({
+    get: () => Math.round((celsius.value * 9) / 5 + 32),
+    set: (v) => {
+      celsius.value = Number.isNaN(v) ? 0 : ((v - 32) * 5) / 9
+    }
+  })
+
   return (
     <div class="av-demo">
       <label>

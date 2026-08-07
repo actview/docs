@@ -13,11 +13,11 @@ description: 秒表示例：生命周期钩子与定时器清理。
 <script lang="tsx">
 import { ref, onMounted, onUnmounted } from 'actview'
 
-const elapsed = ref(0)
-const running = ref(false)
-let timer: number | undefined
-
 export function StopwatchDemo() {
+  const elapsed = ref(0)
+  const running = ref(false)
+  let timer: number | undefined
+
   onMounted(() => console.log('[示例] 秒表组件已挂载'))
   onUnmounted(() => {
     window.clearInterval(timer)

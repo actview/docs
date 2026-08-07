@@ -13,8 +13,6 @@ description: 组件与 Props 示例：父子通信与受控输入。
 <script lang="tsx">
 import { ref } from 'actview'
 
-const name = ref('ActView')
-
 export function GreetCard(props: { name: string; onReset: () => void }) {
   return (
     <div class="av-card">
@@ -25,6 +23,8 @@ export function GreetCard(props: { name: string; onReset: () => void }) {
 }
 
 export function PropsDemo() {
+  const name = ref('ActView')
+
   return (
     <div class="av-demo">
       <input

@@ -13,9 +13,9 @@ description: 计数器示例：ref 响应式状态与事件处理。
 <script lang="tsx">
 import { ref } from 'actview'
 
-const count = ref(0)
-
 export function CounterDemo() {
+  const count = ref(0)
+
   return (
     <div class="av-demo av-demo-center">
       <p class="av-count">{count.value}</p>

@@ -19,15 +19,15 @@ interface TodoItem {
   done: boolean
 }
 
-const todos = reactive<TodoItem[]>([
-  { id: 1, text: '学习 ActView', done: true },
-  { id: 2, text: '写一个示例', done: false }
-])
-const todoInput = ref('')
-const todoFilter = ref<'all' | 'active' | 'done'>('all')
-let todoNextId = 3
-
 export function TodoDemo() {
+  const todos = reactive<TodoItem[]>([
+    { id: 1, text: '学习 ActView', done: true },
+    { id: 2, text: '写一个示例', done: false }
+  ])
+  const todoInput = ref('')
+  const todoFilter = ref<'all' | 'active' | 'done'>('all')
+  let todoNextId = 3
+
   const visible = computed(() => {
     if (todoFilter.value === 'active') return todos.filter((t) => !t.done)
     if (todoFilter.value === 'done') return todos.filter((t) => t.done)
