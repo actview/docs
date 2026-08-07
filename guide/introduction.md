@@ -54,6 +54,7 @@ function Counter() {
   color: #fff;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(66, 184, 131, 0.4);
+  min-width: 65px;
 }
 .counter-btn:hover {
   background: #33a06f;
@@ -76,14 +77,21 @@ function Counter() {
 - `watch` / `watchEffect`（微任务批量触发，返回停止函数）
 - `EffectScope` 作用域管理，组件卸载时自动清理所有 effect
 
-### 🧩 纯 JSX 组件模型
+### 🧩 JSX 组件模型
 
-组件用普通函数书写，`actview` 的编译插件（基于 Babel）会在构建时把函数组件改写为 `defineComponent` 产物：
+ActView 使用 JSX 作为组件 UI 描述方式，无需额外学习模板语法或大量指令（如 v-if、v-for、v-model 等）。条件判断、列表渲染、事件绑定均基于原生 JavaScript 表达式完成，在保持灵活组合能力的同时，获得完整的 TypeScript 类型支持。
+
+不同于传统直接返回 JSX 的函数组件，ActView 在构建阶段通过 Babel 插件 @actview/plugin 对组件进行编译转换，将组件逻辑自动拆分为 setup 与 render 两个阶段：
+
+setup 阶段：负责初始化组件状态、创建响应式数据，仅在组件挂载时执行一次；
+render 阶段：负责根据当前状态生成 UI 描述，在组件首次渲染及响应式依赖变化时重新执行。
+
+基于这种编译时组件拆分机制，ActView 实现了组件级响应式更新模型：当组件内部状态发生变化时，仅触发当前组件的 render 执行，并通过 Virtual DOM diff 更新对应 DOM 节点，而无需重新执行父组件或整棵组件树的渲染流程，从而实现更精细、高效的更新粒度。
 
 ```tsx
-// 你写的源码
+// 你写的源码（普通 JSX 函数组件）
 function App() {
-  const count = ref(0) // setup 只在组件挂载时执行一次
+  const count = ref(0)
   return (
     <button onclick={() => count.value++}>
       {count.value}
@@ -91,12 +99,11 @@ function App() {
   )
 }
 
-// 构建后的产物（示意）
+// 构建后的产物（示意）：函数体被拆成 setup + render 两部分
 const App = defineComponent(function () {
-  const count = ref(0) // setup 只在组件挂载时执行一次
+  const count = ref(0) // setup：组件挂载时只执行一次
 
-  // return render
-  return () => (
+  return () => (       // render：挂载时与依赖更新时都会执行，生成 UI 描述
     <button onclick={() => count.value++}>
       {count.value}
     </button>
@@ -104,11 +111,13 @@ const App = defineComponent(function () {
 })
 ```
 
-`setup` 在整个生命周期中**只执行一次**并返回 render 函数；render 每次渲染读取响应式数据、产出 VNode，与旧 VNode 树做 diff（支持 `key` 的最小移动复用）。
+转换后，组件被拆成两个阶段：
 
-### 🪶 轻量小巧
+- **setup**：整个生命周期中**只执行一次**——创建响应式状态、注册生命周期钩子、创建侦听器；
+- **render**：**挂载时和每次依赖更新时都会执行**——读取数据、产出 VNode，与旧树做 diff。
 
-运行时（`@actview/core`）+ JSX 层（`@actview/jsx`）+ 路由（`@actview/router`）分层清晰，源码易读，非常适合学习「响应式系统 + 虚拟 DOM + 组件化」三者如何协作，也适合作为轻量单页应用的运行时。
+这正是 ActView 与普通 JSX 写法的核心区别：你写的还是同一个函数，但**构建期的代码转换**赋予了它「setup 只跑一次、挂载与依赖更新只重跑渲染函数」的组件语义。
+
 
 ### 🛡️ 内置组件
 
@@ -145,16 +154,6 @@ ActView 刻意**没有**以下 Vue 特性，遇到时请改用 JSX 等价写法�
 | `provide` / `inject` | 暂无内置实现，可用模块级共享状态 |
 | 自定义指令 | 无（不需要，直接用 JSX 属性） |
 
-## 包结构
-
-| 包 | 说明 |
-| --- | --- |
-| `actview` | 框架统一入口，聚合转发 `@actview/core` 的全部 API |
-| `@actview/core` | 运行时：响应式系统、组件模型、渲染器、内置组件、SSR |
-| `@actview/jsx` | JSX 运行时与全局类型（`jsx` / `jsxs` / `createElement` / `Fragment`） |
-| `@actview/router` | 响应式路由 |
-| `@actview/plugin` | 编译期插件（`actviewPlugin` vite 插件 / `defineComponentPlugin` Babel 插件） |
-| `@actview/create-cli` | 脚手架工具：一条命令创建 TypeScript + Vite + ActView 项目 |
 
 ## 现在开始
 
