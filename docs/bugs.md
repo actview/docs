@@ -86,7 +86,7 @@
 
 ## Bug #2：`pnpm build` + `pnpm preview` 打开页面报 `Cannot read properties of undefined (reading 'has')`
 
-- **状态**：已定位（未修复）
+- **状态**：✅ 已解决（`@actview/press` **1.0.7**，2026-08 发布；修复验证见文末）
 - **涉及**：ActPress（`@actview/press`）生产构建的 `manualChunks` 拆分配置（`src/node/build/bundle.ts`）
 - **发现版本**：`@actview/press` npm 1.0.4 / 1.0.5（`^1.0.1` 范围实际解析版本）
 
@@ -152,6 +152,15 @@
 1. 在 `bundle.ts` 的 `excludedModules` 中加入 `@actview/core`（以及 `@actview/jsx`、`actview`、`@actview/router` 等 framework 与 theme 共用的包），避免它们被打进 theme chunk 造成循环；
 2. 或调整 `manualChunks`，消除 framework ↔ theme 循环（合并/重新划分 chunk）；
 3. 或把 `client/app/data.ts` 顶层的 `readonly(siteData)` 初始化延迟到 `createApp()` 调用时（避免模块加载期依赖其他 chunk）。
+
+### 修复验证（@actview/press 1.0.7）
+
+依赖升级到 `1.0.7` 后重新 `pnpm build`：
+
+- ✅ 构建日志中 **`Circular chunk: framework -> theme -> framework` 警告消失**；
+- ✅ 产物中 `framework.*.js` **不再 import `theme.*.js`**（循环依赖已打破，仅 theme 单向依赖 framework）；
+- ✅ `framework` 顶层**不再调用 `readonly(siteData)`**（原崩溃点 `ref(readonly(siteData))` 已移除/延迟）；
+- ✅ `pnpm preview` 冒烟正常：首页 / 示例页均 HTTP 200，返回完整 SSR HTML。
 
 ---
 
