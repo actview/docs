@@ -26,7 +26,7 @@ export default defineConfig({
       '/examples/': { base: '/examples/', items: sidebarExamples() }
     },
 
-    socialLinks: [{ icon: 'github', link: 'https://github.com/ALiuYiLin/JSX-Demo' }],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/ALiuYiLin/actview' }],
 
     outline: { label: '本页目录' },
 
