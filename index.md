@@ -4,7 +4,7 @@ layout: home
 hero:
   name: ActView
   text: 轻量级响应式 JSX 框架
-  tagline: 基于 Proxy 信号响应式系统与虚拟 DOM diff，让函数组件自动更新。没有模板编译器，没有 v-* 指令，只有 TypeScript 与 JSX。
+  tagline: 拥有类似 Vue 的响应式 API，并具备 JSX 写法的响应式前端开发框架。
   actions:
     - theme: brand
       text: 快速上手
