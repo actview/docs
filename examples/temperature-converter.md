@@ -6,7 +6,60 @@ description: 温度转换示例：computed 双向换算摄氏与华氏。
 
 用 `computed` 在两个输入框之间做双向换算：修改摄氏 → 华氏自动更新，反之亦然。
 
-## 代码
+## 在线体验
+
+真实运行的组件——修改任意一个输入框，另一个自动换算：
+
+<script lang="tsx">
+import { ref, computed } from 'actview'
+
+const celsius = ref(20)
+const fahrenheit = computed(() => Math.round((celsius.value * 9) / 5 + 32))
+
+export function TemperatureDemo() {
+  return (
+    <div
+      style={{
+        fontFamily: 'system-ui, sans-serif',
+        padding: '16px',
+        border: '1px solid #e2e8f0',
+        borderRadius: '8px',
+        background: '#f8fafc'
+      }}
+    >
+      <label>
+        摄氏（°C）：
+        <input
+          type="number"
+          value={String(celsius.value)}
+          oninput={(e) => {
+            const v = Number(e.target.value)
+            celsius.value = Number.isNaN(v) ? 0 : v
+          }}
+        />
+      </label>
+      <label style={{ marginLeft: '16px' }}>
+        华氏（°F）：
+        <input
+          type="number"
+          value={String(fahrenheit.value)}
+          oninput={(e) => {
+            const v = Number(e.target.value)
+            celsius.value = Number.isNaN(v) ? 0 : ((v - 32) * 5) / 9
+          }}
+        />
+      </label>
+      <p style={{ marginBottom: 0 }}>
+        当前温度：{celsius.value}°C = {fahrenheit.value}°F
+      </p>
+    </div>
+  )
+}
+</script>
+
+<TemperatureDemo />
+
+## 完整代码
 
 ::: code-group
 

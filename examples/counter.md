@@ -6,7 +6,41 @@ description: 计数器示例：ref 响应式状态与事件处理。
 
 最基础的响应式示例：`ref` 保存计数，按钮事件修改状态，组件自动更新。
 
-## 代码
+## 在线体验
+
+下面的计数器就是**当前页面真实运行的 ActView 组件**——由 `<script lang="tsx">` 块定义、Markdown 正文渲染，点击按钮试试：
+
+<script lang="tsx">
+import { ref } from 'actview'
+
+const count = ref(0)
+
+export function CounterDemo() {
+  return (
+    <div
+      style={{
+        textAlign: 'center',
+        fontFamily: 'system-ui, sans-serif',
+        padding: '16px',
+        border: '1px solid #e2e8f0',
+        borderRadius: '8px',
+        background: '#f8fafc'
+      }}
+    >
+      <p style={{ fontSize: '40px', margin: '8px 0' }}>{count.value}</p>
+      <div>
+        <button onclick={() => count.value--}>-1</button>
+        <button onclick={() => count.value++}>+1</button>
+        <button onclick={() => (count.value = 0)}>重置</button>
+      </div>
+    </div>
+  )
+}
+</script>
+
+<CounterDemo />
+
+## 完整代码
 
 ::: code-group
 
