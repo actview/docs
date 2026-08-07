@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@actview/core':
-        specifier: ^1.0.18
-        version: 1.0.18
+        specifier: ^1.0.19
+        version: 1.0.19
       '@actview/jsx':
         specifier: ^1.0.11
         version: 1.0.11
@@ -24,8 +24,8 @@ importers:
         specifier: ^1.0.10
         version: 1.0.10
       actview:
-        specifier: ^1.0.17
-        version: 1.0.17
+        specifier: ^1.0.18
+        version: 1.0.18
 
 packages:
 
@@ -34,6 +34,9 @@ packages:
 
   '@actview/core@1.0.18':
     resolution: {integrity: sha512-8/U089zxM7j1grVPvI2HLvmLrk8T+cuu6xlFOLqvuI7+r5/W+OIakq+j4bI9HcdSOuVBo1yahaN0nSqz/9R0Ug==}
+
+  '@actview/core@1.0.19':
+    resolution: {integrity: sha512-Q972jYxzbKB3waP2MfOySQxdtITduwQsm4JpO5pAQy7a5RA7S+aMX+rD3kwPzTeCforfn7+m1iGYBBuS/Kaa0g==}
 
   '@actview/jsx@1.0.11':
     resolution: {integrity: sha512-eMBEs3mQE9yIg1F9qE2nlmPAALRunQ1mlWLJp/rJW7iR1Y3RBNFCBdA7eHFqgQCMHRa5Fcld0NjbADfZPNsS4A==}
@@ -513,6 +516,9 @@ packages:
   actview@1.0.17:
     resolution: {integrity: sha512-sdzbANnceTjwcqsW3+NJAX8iAo/cRufHk7i43nln2AEceOd0ALtCcsHG0hU7HdRCas//Q5lTwBfBB24BZPcEww==}
 
+  actview@1.0.18:
+    resolution: {integrity: sha512-YV52Ci9oOJvd/TNOfdLTybIgI1wIEOWFV5kgSdkvoFn10Qv+OpUarLopgPWJuL+kSYe/vQKwK37GjlVZiNZ17w==}
+
   baseline-browser-mapping@2.11.12:
     resolution: {integrity: sha512-r7WnVImvVCeFpf2DOXfy41aPWzeNg3H/A2X4dKmy1QL0MSyyk/e7z8ihJ3N6Nn2PsdhkVlqnEfnUE4a05P2aTA==}
     engines: {node: '>=6.0.0'}
@@ -788,6 +794,10 @@ snapshots:
       '@actview/jsx': 1.0.11
 
   '@actview/core@1.0.18':
+    dependencies:
+      '@actview/jsx': 1.0.11
+
+  '@actview/core@1.0.19':
     dependencies:
       '@actview/jsx': 1.0.11
 
@@ -1174,6 +1184,11 @@ snapshots:
   actview@1.0.17:
     dependencies:
       '@actview/core': 1.0.18
+      '@actview/jsx': 1.0.11
+
+  actview@1.0.18:
+    dependencies:
+      '@actview/core': 1.0.19
       '@actview/jsx': 1.0.11
 
   baseline-browser-mapping@2.11.12: {}

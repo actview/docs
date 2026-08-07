@@ -14,7 +14,13 @@ description: 温度转换示例：computed 双向换算摄氏与华氏。
 import { ref, computed } from 'actview'
 
 const celsius = ref(20)
-const fahrenheit = computed(() => Math.round((celsius.value * 9) / 5 + 32))
+// 可写 computed：读华氏走 get，改华氏走 set 反写摄氏
+const fahrenheit = computed({
+  get: () => Math.round((celsius.value * 9) / 5 + 32),
+  set: (v) => {
+    celsius.value = Number.isNaN(v) ? 0 : ((v - 32) * 5) / 9
+  }
+})
 
 export function TemperatureDemo() {
   return (
@@ -35,10 +41,7 @@ export function TemperatureDemo() {
         <input
           type="number"
           value={String(fahrenheit.value)}
-          oninput={(e) => {
-            const v = Number(e.target.value)
-            celsius.value = Number.isNaN(v) ? 0 : ((v - 32) * 5) / 9
-          }}
+          oninput={(e) => (fahrenheit.value = Number(e.target.value))}
         />
       </label>
       <p class="av-result">
@@ -98,17 +101,17 @@ import { ref, computed } from 'actview'
 
 export function App() {
   const celsius = ref(20)
-  // 摄氏 → 华氏：F = C × 9/5 + 32
-  const fahrenheit = computed(() => Math.round((celsius.value * 9) / 5 + 32))
+  // 可写 computed：读华氏走 get（F = C × 9/5 + 32），改华氏走 set 反写摄氏
+  const fahrenheit = computed({
+    get: () => Math.round((celsius.value * 9) / 5 + 32),
+    set: (v) => {
+      celsius.value = Number.isNaN(v) ? 0 : ((v - 32) * 5) / 9
+    }
+  })
 
   function setCelsius(e: FormEvent<HTMLInputElement>) {
     const v = Number(e.target.value)
     celsius.value = Number.isNaN(v) ? 0 : v
-  }
-
-  function setFahrenheit(e: FormEvent<HTMLInputElement>) {
-    const v = Number(e.target.value)
-    celsius.value = Number.isNaN(v) ? 0 : ((v - 32) * 5) / 9
   }
 
   return (
@@ -119,7 +122,11 @@ export function App() {
       </label>
       <label class="av-gap">
         华氏（°F）：
-        <input type="number" value={String(fahrenheit.value)} oninput={setFahrenheit} />
+        <input
+          type="number"
+          value={String(fahrenheit.value)}
+          oninput={(e) => (fahrenheit.value = Number(e.target.value))}
+        />
       </label>
       <p class="av-result">
         当前温度：{celsius.value}°C = {fahrenheit.value}°F
@@ -141,7 +148,7 @@ createApp(App).mount('#app')
 ## 要点
 
 - **单一数据源**：状态只存摄氏值，华氏是 `computed` 派生值——避免了两个状态互相同步的混乱；
-- 修改华氏输入时反推摄氏值，`computed` 自动重算；
+- 修改华氏输入时写入可写 computed（`{ get, set }`），由 `set` 反写摄氏值，`computed` 自动重算；
 - `e.target.value` 是字符串，记得用 `Number()` 转换并处理 `NaN`。
 
 ## 相关文档
