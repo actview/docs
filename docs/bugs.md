@@ -6,7 +6,7 @@
 
 ## Bug #1：卸载/重装 `@actview/press` 后，首次 `pnpm dev` 在线体验组件点击无效
 
-- **状态**：已定位（未修复）
+- **状态**：✅ 已解决（`@actview/core@1.0.19` / `actview@1.0.18`，2026-08 发布；修复验证见文末）
 - **涉及**：ActPress（`@actview/press`）dev 模式 + vite 依赖预构建
 - **发现版本**：`@actview/press` npm 1.0.4 / 1.0.5（`^1.0.1` 范围实际解析版本）
 
@@ -233,6 +233,80 @@
 - ✅ `useDark()` 新增 `setAppearance(value)`：写底层 `preference.value` 并持久化 `localStorage`，`useData()` 返回 `{ isDark, setAppearance }`；
 - ✅ 源码注释明确引用本 Bug（"Cannot set property value ... only a getter"，Bug #3）；
 - ✅ `pnpm build` 无 `Circular chunk` 警告、`pnpm preview` 冒烟 HTTP 200。
+
+---
+
+## Bug #4：生产构建下页面「在线体验」组件交互全部失效（`@actview/core` 双实例）
+
+- **状态**：已定位（未修复）
+- **涉及**：`@actview/core` 版本不一致 → rollup 打包双实例；文档站依赖解析
+- **发现版本**：`@actview/press` 1.0.8 + 项目根 `@actview/core@1.0.19`（press 内部 `@actview/core@1.0.18`）
+
+### 问题出现场景
+
+1. `pnpm build` + `pnpm preview`（或部署到 GitHub Pages）后打开页面；
+2. 操作任意「在线体验」组件（`examples/*.md` 中 `<script lang="tsx">` 的真实组件）：
+   - `examples/counter`：点击 `+1` 无反应；
+   - `examples/todo-list`：添加任务无反应；
+   - `examples/component-props`：输入框修改 `name`，`GreetCard` 不更新；
+3. 控制台**无任何报错**，但 UI 不随状态变化更新；
+4. 同一页面 `pnpm dev` 下一切正常；主题切换按钮（theme chunk）正常。
+
+### 现象要点
+
+- 仅**生产构建产物**出现（dev 正常）；
+- **所有**页面在线体验组件的交互都失效（非某个页面特有）；
+- 无报错——事件处理器执行了（状态确实被修改），但**触发不了重渲染**；
+- 主题组件（`VPSwitchAppearance` 等，位于 theme/framework chunk）事件正常。
+
+### 根因（含证据）
+
+核心：**`@actview/core` 在生产构建中被打包成两份（双实例）——项目根依赖与 `@actview/press` 内部依赖版本不一致，页面组件用的响应式系统与框架负责挂载/调度的响应式系统不是同一份，`track`/`trigger` 跨副本断链。**
+
+证据链（playwright 真实浏览器实测 + 产物分析）：
+
+1. **实测对照**：
+
+   | 环境 | 行为 |
+   | --- | --- |
+   | `pnpm dev` | 正常（输入 name，GreetCard 立即更新） |
+   | `pnpm build` + preview | 全部在线体验组件交互失效，无报错 |
+   | preview 下主题切换按钮 | 正常（可切换 dark） |
+
+2. **版本不一致**（`readlink` 实测）：
+   - 项目根：`node_modules/@actview/core` → `@actview/core@1.0.19`（页面模块 `import { ref } from 'actview'` 用）
+   - `@actview/press@1.0.8` 内部：`node_modules/.pnpm/@actview+press@1.0.8.../node_modules/@actview/core` → `@actview/core@1.0.18`
+
+3. **双副本 chunk**（build 产物 `assets/chunks/`）：
+   - `index.*.js`（4KB）：内联完整响应式实现副本——`ref`、`computed`、`reactive` 代理、`targetMap`、`track`、`trigger`、`activeEffect`、`defineComponent`；
+   - `framework.*.js`（31KB）：另一份 core 实现——`mountComponent`、`patchEvent`/`_vei`、`[actview]` 错误消息；
+   - 页面 chunk（`examples_*.md.*.js`）：`import { ref, defineComponent } from "./chunks/index.*.js"`（副本 A），其组件由 framework（副本 B）的 `mountComponent` 挂载。
+
+4. **断链机制**：
+   - 页面组件的 `ref()` 来自副本 A；组件 render effect 由副本 B 的 `runEffect` 创建（副本 B 的 `activeEffect`）；
+   - render 读取 `ref.value` → 副本 A 的 `track` 读副本 A 的 `activeEffect` = null（活动 effect 在副本 B）→ **依赖收集失败**；
+   - 点击/输入 → 副本 A 的 `trigger` → 副本 A 的 `targetMap` 无依赖 → 不重渲染 → 交互无效且无报错。
+
+5. **dev 正常的原因**：vite dev 的 `optimizeDeps` 预构建把 `actview`/`@actview/core` 统一解析为项目根版本（1.0.19）单份产物，页面与主题共享同一实例。
+
+### 触发条件与影响
+
+- 项目根 `@actview/core` 版本与 `@actview/press` 内部依赖版本不一致时必现（当前 `^1.0.18` 解析到 1.0.19 vs press 锁定 1.0.18）；
+- 影响：生产部署（GitHub Pages）后所有在线体验组件不可交互。
+
+### 修复方向建议
+
+1. **版本对齐**：项目根 `@actview/core` 固定到与 `@actview/press` 依赖一致的版本，或升级 press 使其依赖范围覆盖根版本；
+2. `package.json` 加 `pnpm.overrides: { "@actview/core": "1.0.19" }` 强制单版本；
+3. 升级 `@actview/press`（若其依赖范围更新到与根一致）。
+
+### 修复验证（@actview/core 1.0.19 / actview 1.0.18）
+
+当前安装版本即修复版（npm 上 `@actview/core@1.0.19` 与 `actview@1.0.18` 同批发布，gitHead `700128c`）。实测验证：
+
+- 清空 `.vitepress/cache`（模拟「卸载重装后缓存失效的首次 dev」）→ `pnpm dev`；
+- 打开 `examples/counter` **立即点击 `+1`**：计数 `0 → 1`，交互正常 ✅；
+- 控制台无错误。
 
 ---
 
