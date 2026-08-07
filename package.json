@@ -5,15 +5,16 @@
   "scripts": {
     "dev": "actview-press dev",
     "build": "actview-press build",
-    "preview": "actview-press preview"
+    "preview": "actview-press preview",
+    "update:actview": "node scirpts/update-actview.js"
   },
   "devDependencies": {
-    "@actview/core": "^1.0.18",
+    "@actview/core": "^1.0.19",
     "@actview/jsx": "^1.0.11",
     "@actview/plugin": "^1.0.7",
     "@actview/press": "^1.0.8",
     "@actview/router": "^1.0.10",
-    "actview": "^1.0.17"
+    "actview": "^1.0.18"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
