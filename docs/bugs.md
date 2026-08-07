@@ -310,4 +310,69 @@
 
 ---
 
+## Bug #5：文档站示例页的具名插槽（`<template slot="name">`）不生效
+
+- **状态**：已定位（未修复）
+- **涉及**：ActPress 文档站 markdown 页面的 `<script lang="tsx">` 编译管线（缺 `defineComponentPlugin` 转换）
+- **发现版本**：文档站全部版本（`@actview/press` 1.0.8）
+
+### 问题出现场景
+
+1. `examples/slot-panel.md` 的「在线体验」组件（`examples/slot-panel.md:30-35`）使用具名插槽：
+   ```tsx
+   <PanelDemo>
+     <template slot="title">📌 公告</template>
+     <p>这是一个面板示例…</p>
+     <button>操作</button>
+     <template slot="footer">底部信息 —— footer 具名插槽</template>
+   </PanelDemo>
+   ```
+2. 打开页面：**顶部插槽（title）与底部插槽（footer）都不生效**——header 显示兜底「（无标题）」、footer 为空，而插槽内容被渲染进了主体（children）区域。
+
+### 现象要点
+
+- 在线体验与 dev / build 环境均复现；
+- 普通 children（默认插槽）正常，仅**具名插槽**失效；
+- 真实 ActView 项目中（经 `@actview/plugin` 的 vite 插件编译）该写法正常——问题仅限文档站页面。
+
+### 根因（含证据）
+
+核心：**具名插槽的 `<template slot="name">` 依赖编译期 Babel 转换（`@actview/plugin` 的 `defineComponentPlugin`），但文档站 markdown 页面的 `<script lang="tsx">` 编译管线只做 JSX 转换，没有经过该插件——`<template slot>` 原样保留为原生元素，`props.slots` 始终为空。**
+
+证据链（dev 产物 + playwright 实测）：
+
+1. **编译产物**（`/examples/slot-panel.md` 模块）：
+   ```js
+   export const SlotDemo = defineComponent(function () {
+     return () => jsxs(PanelDemo, {
+       children: [
+         jsx("template", { slot: "title", children: "📌 公告" }),   // ← 未转换！
+         jsx("p", { class: "av-panel-text", ... }),
+         jsx("button", { ... }),
+         jsx("template", { slot: "footer", children: "底部信息…" }) // ← 未转换！
+       ]
+     });
+   });
+   ```
+   `<template slot="title">` 应被转换为 `slots: { title: () => … }`，但**原样保留**为 `jsx("template", { slot: "title", ... })`。
+
+2. **playwright 实测**（打开 `/examples/slot-panel`）：
+   - header 渲染为 `（无标题）`（`props.slots?.title?.()` 为 undefined 走兜底）；
+   - footer 渲染为 ``（空）；
+   - main 区域内容为 `📌 公告 这是一个面板示例…操作 底部信息 —— footer 具名插槽`——**template 元素被当普通 children 渲染**。
+
+3. **机制**：真实项目经 `actviewPlugin`（vite 插件 → Babel `defineComponentPlugin`）编译，`<template slot>` 在编译期转换为 `slots` prop；文档站页面的 `<script lang="tsx">` 由 ActPress 的 markdown 编译管线处理，**未接入 `defineComponentPlugin`**，因此 `props.slots` 恒为 undefined。
+
+### 触发条件与影响
+
+- 所有文档站示例页中使用 `<template slot="name">` 具名插槽的在线体验组件（当前为 `examples/slot-panel.md`）；
+- 默认插槽（children）不受影响。
+
+### 修复方向建议
+
+1. 在 ActPress 的 markdown `<script lang="tsx">` 编译管线中接入 `defineComponentPlugin`（或等价的 template-slot 转换）；
+2. 或文档站示例改用**函数 children 形式的作用域插槽**（`props.children?.()`）代替 `<template slot>` 语法（不依赖编译期转换）。
+
+---
+
 <!-- 后续 bug 在此追加 -->

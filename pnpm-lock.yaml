@@ -18,8 +18,8 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7
       '@actview/press':
-        specifier: ^1.0.9
-        version: 1.0.9(postcss@8.5.25)
+        specifier: ^1.0.10
+        version: 1.0.10(postcss@8.5.25)
       '@actview/router':
         specifier: ^1.0.10
         version: 1.0.10
@@ -41,8 +41,8 @@ packages:
   '@actview/plugin@1.0.7':
     resolution: {integrity: sha512-T6P8Sog9KnB8EYzTZCVt3wopcKmVAgwHpYZvbdbykQM8sgJsQq/fHzUia7miL+I01U2dCY9tk0gLbk2/O+sFHg==}
 
-  '@actview/press@1.0.9':
-    resolution: {integrity: sha512-0Rg6/e+e8DCiHRnKI20HAAgBjkGaCSUCJwRoYt2iMlVn38ywH0FsRKSCDUCLHcnQDT6RlXkDM/p9f4/tjpk+LQ==}
+  '@actview/press@1.0.10':
+    resolution: {integrity: sha512-2MqI83fTJhD+pXvo5VEvNBx8MhbGoQdAXNI2onZDeJ89OkYS6np580tz1f6CKY7hLTSFOsx5gqcp1IcgyFwMDg==}
     hasBin: true
     peerDependencies:
       markdown-it-mathjax3: ^4
@@ -797,7 +797,7 @@ snapshots:
     dependencies:
       '@babel/core': 8.0.1
 
-  '@actview/press@1.0.9(postcss@8.5.25)':
+  '@actview/press@1.0.10(postcss@8.5.25)':
     dependencies:
       '@actview/core': 1.0.19
       '@actview/jsx': 1.0.11
