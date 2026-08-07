@@ -18,8 +18,8 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7
       '@actview/press':
-        specifier: ^1.0.8
-        version: 1.0.8(postcss@8.5.25)
+        specifier: ^1.0.9
+        version: 1.0.9(postcss@8.5.25)
       '@actview/router':
         specifier: ^1.0.10
         version: 1.0.10
@@ -32,9 +32,6 @@ packages:
   '@actview/core@1.0.12':
     resolution: {integrity: sha512-kINSZYH2FQKtPY+k7JZwChNceztmzWrG9nJy/pNzETD+Rn4jtiRO6YVwS6sZTUEf35l+i1Nb6FAhRXeJvsAjGg==}
 
-  '@actview/core@1.0.18':
-    resolution: {integrity: sha512-8/U089zxM7j1grVPvI2HLvmLrk8T+cuu6xlFOLqvuI7+r5/W+OIakq+j4bI9HcdSOuVBo1yahaN0nSqz/9R0Ug==}
-
   '@actview/core@1.0.19':
     resolution: {integrity: sha512-Q972jYxzbKB3waP2MfOySQxdtITduwQsm4JpO5pAQy7a5RA7S+aMX+rD3kwPzTeCforfn7+m1iGYBBuS/Kaa0g==}
 
@@ -44,8 +41,8 @@ packages:
   '@actview/plugin@1.0.7':
     resolution: {integrity: sha512-T6P8Sog9KnB8EYzTZCVt3wopcKmVAgwHpYZvbdbykQM8sgJsQq/fHzUia7miL+I01U2dCY9tk0gLbk2/O+sFHg==}
 
-  '@actview/press@1.0.8':
-    resolution: {integrity: sha512-/ZI6H9bIlh9iUTOcx5RbqImdgGT7B90SiDnPZhOTZnd7LAJ22+P+nlV6ClIqc52f74hQFJ31D9yY2ReGMMKvcg==}
+  '@actview/press@1.0.9':
+    resolution: {integrity: sha512-0Rg6/e+e8DCiHRnKI20HAAgBjkGaCSUCJwRoYt2iMlVn38ywH0FsRKSCDUCLHcnQDT6RlXkDM/p9f4/tjpk+LQ==}
     hasBin: true
     peerDependencies:
       markdown-it-mathjax3: ^4
@@ -513,9 +510,6 @@ packages:
   '@ungap/structured-clone@1.3.3':
     resolution: {integrity: sha512-60YRaenCQcVjYEKOcG824+DRGGIQ3VKErcBoAEDJZz5bKIs2ZG+X/H9Nk+Q6EVkwJk5QNApxbrc5QtBSwtrXAg==}
 
-  actview@1.0.17:
-    resolution: {integrity: sha512-sdzbANnceTjwcqsW3+NJAX8iAo/cRufHk7i43nln2AEceOd0ALtCcsHG0hU7HdRCas//Q5lTwBfBB24BZPcEww==}
-
   actview@1.0.18:
     resolution: {integrity: sha512-YV52Ci9oOJvd/TNOfdLTybIgI1wIEOWFV5kgSdkvoFn10Qv+OpUarLopgPWJuL+kSYe/vQKwK37GjlVZiNZ17w==}
 
@@ -793,10 +787,6 @@ snapshots:
     dependencies:
       '@actview/jsx': 1.0.11
 
-  '@actview/core@1.0.18':
-    dependencies:
-      '@actview/jsx': 1.0.11
-
   '@actview/core@1.0.19':
     dependencies:
       '@actview/jsx': 1.0.11
@@ -807,9 +797,9 @@ snapshots:
     dependencies:
       '@babel/core': 8.0.1
 
-  '@actview/press@1.0.8(postcss@8.5.25)':
+  '@actview/press@1.0.9(postcss@8.5.25)':
     dependencies:
-      '@actview/core': 1.0.18
+      '@actview/core': 1.0.19
       '@actview/jsx': 1.0.11
       '@actview/plugin': 1.0.7
       '@actview/router': 1.0.10
@@ -821,7 +811,7 @@ snapshots:
       '@shikijs/transformers': 4.4.2
       '@shikijs/types': 4.4.2
       '@types/markdown-it': 14.1.2
-      actview: 1.0.17
+      actview: 1.0.18
       focus-trap: 8.2.2
       minisearch: 7.2.0
       shiki: 4.4.2
@@ -1180,11 +1170,6 @@ snapshots:
   '@types/unist@3.0.3': {}
 
   '@ungap/structured-clone@1.3.3': {}
-
-  actview@1.0.17:
-    dependencies:
-      '@actview/core': 1.0.18
-      '@actview/jsx': 1.0.11
 
   actview@1.0.18:
     dependencies:
