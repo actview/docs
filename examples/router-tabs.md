@@ -41,33 +41,64 @@ const tabs = [
 
 export function RouterDemo() {
   return (
-    <div
-      style={{
-        fontFamily: 'system-ui, sans-serif',
-        padding: '16px',
-        border: '1px solid #e2e8f0',
-        borderRadius: '8px',
-        background: '#f8fafc'
-      }}
-    >
+    <div class="av-demo">
       <nav>
         {tabs.map((tab) => (
-          <RouterLink
-            key={tab.path}
-            to={tab.path}
-            style={{ marginRight: '12px', textDecoration: 'none' }}
-          >
+          <RouterLink key={tab.path} to={tab.path} class="av-nav-link">
             {tab.label}
           </RouterLink>
         ))}
       </nav>
-      <main style={{ marginTop: '12px' }}>
+      <main class="av-router-view">
         <RouterView />
       </main>
     </div>
   )
 }
 </script>
+
+<style>
+.av-demo {
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 16px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+}
+.av-nav-link {
+  margin-right: 12px;
+  text-decoration: none;
+  color: var(--vp-c-brand);
+}
+.av-nav-link:hover {
+  text-decoration: underline;
+}
+.av-router-view {
+  margin-top: 12px;
+}
+.av-demo button {
+  margin-right: 6px;
+  padding: 6px 14px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-brand);
+  color: #fff;
+  cursor: pointer;
+}
+.av-demo button:hover {
+  filter: brightness(1.1);
+}
+.av-demo input {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+}
+</style>
 
 <RouterDemo />
 

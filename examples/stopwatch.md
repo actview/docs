@@ -25,17 +25,8 @@ export function StopwatchDemo() {
   })
 
   return (
-    <div
-      style={{
-        fontFamily: 'system-ui, sans-serif',
-        padding: '16px',
-        border: '1px solid #e2e8f0',
-        borderRadius: '8px',
-        background: '#f8fafc',
-        textAlign: 'center'
-      }}
-    >
-      <p style={{ fontSize: '40px', margin: '8px 0' }}>{elapsed.value} 秒</p>
+    <div class="av-demo av-demo-center">
+      <p class="av-count">{elapsed.value} 秒</p>
       <div>
         {!running.value ? (
           <button
@@ -70,6 +61,45 @@ export function StopwatchDemo() {
   )
 }
 </script>
+
+<style>
+.av-demo {
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 16px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+}
+.av-demo-center {
+  text-align: center;
+}
+.av-count {
+  font-size: 40px;
+  margin: 8px 0;
+}
+.av-demo button {
+  margin-right: 6px;
+  padding: 6px 14px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-brand);
+  color: #fff;
+  cursor: pointer;
+}
+.av-demo button:hover {
+  filter: brightness(1.1);
+}
+.av-demo input {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+}
+</style>
 
 <StopwatchDemo />
 

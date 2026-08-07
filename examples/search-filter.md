@@ -33,23 +33,15 @@ export function SearchDemo() {
   })
 
   return (
-    <div
-      style={{
-        fontFamily: 'system-ui, sans-serif',
-        padding: '16px',
-        border: '1px solid #e2e8f0',
-        borderRadius: '8px',
-        background: '#f8fafc'
-      }}
-    >
+    <div class="av-demo">
       <input
+        class="av-block"
         value={keyword.value}
         oninput={(e) => (keyword.value = e.target.value)}
         placeholder="输入关键词过滤…"
-        style={{ width: '100%', boxSizing: 'border-box' }}
       />
 
-      <label style={{ display: 'block', margin: '8px 0' }}>
+      <label class="av-check">
         <input
           type="checkbox"
           checked={onlyLong.value}
@@ -58,12 +50,12 @@ export function SearchDemo() {
         只看两个字以上的名称
       </label>
 
-      <p style={{ opacity: 0.7 }}>
+      <p class="av-muted">
         共 {filtered.value.length} 项
         {keyword.value && `（关键词：${keyword.value}）`}
       </p>
 
-      <ul style={{ margin: 0 }}>
+      <ul class="av-list">
         {filtered.value.map((name) => (
           <li key={name}>{name}</li>
         ))}
@@ -72,6 +64,53 @@ export function SearchDemo() {
   )
 }
 </script>
+
+<style>
+.av-demo {
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 16px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+}
+.av-block {
+  width: 100%;
+  box-sizing: border-box;
+}
+.av-check {
+  display: block;
+  margin: 8px 0;
+}
+.av-muted {
+  opacity: 0.7;
+}
+.av-list {
+  margin: 0;
+  padding-left: 20px;
+}
+.av-demo button {
+  margin-right: 6px;
+  padding: 6px 14px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-brand);
+  color: #fff;
+  cursor: pointer;
+}
+.av-demo button:hover {
+  filter: brightness(1.1);
+}
+.av-demo input {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+}
+</style>
 
 <SearchDemo />
 

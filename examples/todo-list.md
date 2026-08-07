@@ -36,15 +36,7 @@ export function TodoDemo() {
   const remaining = computed(() => todos.filter((t) => !t.done).length)
 
   return (
-    <div
-      style={{
-        fontFamily: 'system-ui, sans-serif',
-        padding: '16px',
-        border: '1px solid #e2e8f0',
-        borderRadius: '8px',
-        background: '#f8fafc'
-      }}
-    >
+    <div class="av-demo">
       <div>
         <input
           value={todoInput.value}
@@ -70,12 +62,13 @@ export function TodoDemo() {
         </button>
       </div>
 
-      <p style={{ opacity: 0.7 }}>剩余 {remaining.value} 项未完成</p>
+      <p class="av-muted">剩余 {remaining.value} 项未完成</p>
 
       <div>
         {(['all', 'active', 'done'] as const).map((f) => (
           <button
             key={f}
+            class="av-filter"
             style={{ fontWeight: todoFilter.value === f ? 'bold' : 'normal' }}
             onclick={() => (todoFilter.value = f)}
           >
@@ -84,7 +77,7 @@ export function TodoDemo() {
         ))}
       </div>
 
-      <ul>
+      <ul class="av-list">
         {visible.value.map((todo) => (
           <li key={todo.id}>
             <input
@@ -93,19 +86,14 @@ export function TodoDemo() {
               onchange={(e) => (todo.done = e.target.checked)}
             />
             <span
-              style={{
-                textDecoration: todo.done ? 'line-through' : 'none',
-                opacity: todo.done ? 0.6 : 1
-              }}
+              class={todo.done ? 'av-done' : ''}
             >
               {todo.text}
             </span>
-            <button
-              onclick={() => {
+            <button class="av-danger" onclick={() => {
                 const index = todos.findIndex((t) => t.id === todo.id)
                 if (index >= 0) todos.splice(index, 1)
-              }}
-            >
+              }}>
               删除
             </button>
           </li>
@@ -115,6 +103,57 @@ export function TodoDemo() {
   )
 }
 </script>
+
+<style>
+.av-demo {
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 16px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+}
+.av-muted {
+  opacity: 0.7;
+}
+.av-list {
+  margin-bottom: 0;
+  padding-left: 20px;
+}
+.av-list li {
+  margin: 4px 0;
+}
+.av-done {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+.av-demo button {
+  margin-right: 6px;
+  padding: 6px 14px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-brand);
+  color: #fff;
+  cursor: pointer;
+}
+.av-demo button:hover {
+  filter: brightness(1.1);
+}
+.av-demo button.av-danger {
+  background: transparent;
+  color: var(--vp-c-danger-1);
+  border-color: var(--vp-c-danger-1);
+}
+.av-demo input {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+}
+</style>
 
 <TodoDemo />
 

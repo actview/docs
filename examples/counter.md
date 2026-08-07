@@ -17,17 +17,8 @@ const count = ref(0)
 
 export function CounterDemo() {
   return (
-    <div
-      style={{
-        textAlign: 'center',
-        fontFamily: 'system-ui, sans-serif',
-        padding: '16px',
-        border: '1px solid #e2e8f0',
-        borderRadius: '8px',
-        background: '#f8fafc'
-      }}
-    >
-      <p style={{ fontSize: '40px', margin: '8px 0' }}>{count.value}</p>
+    <div class="av-demo av-demo-center">
+      <p class="av-count">{count.value}</p>
       <div>
         <button onclick={() => count.value--}>-1</button>
         <button onclick={() => count.value++}>+1</button>
@@ -38,7 +29,47 @@ export function CounterDemo() {
 }
 </script>
 
+<style>
+.av-demo {
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 16px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+}
+.av-demo-center {
+  text-align: center;
+}
+.av-count {
+  font-size: 40px;
+  margin: 8px 0;
+}
+.av-demo button {
+  margin-right: 6px;
+  padding: 6px 14px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-brand);
+  color: #fff;
+  cursor: pointer;
+}
+.av-demo button:hover {
+  filter: brightness(1.1);
+}
+.av-demo input {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+}
+</style>
+
 <CounterDemo />
+
 
 ## 完整代码
 

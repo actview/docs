@@ -22,9 +22,7 @@ const AsyncCardDemo = lazy(
           resolve({
             default: defineComponent(function Loaded() {
               return () => (
-                <div style={{ padding: '16px', background: '#fef3c7', borderRadius: '8px' }}>
-                  🎉 异步组件加载完成
-                </div>
+                <div class="av-card av-card-ok">🎉 异步组件加载完成</div>
               )
             })
           }),
@@ -35,22 +33,61 @@ const AsyncCardDemo = lazy(
 
 export function AsyncDemo() {
   return (
-    <div
-      style={{
-        fontFamily: 'system-ui, sans-serif',
-        padding: '16px',
-        border: '1px solid #e2e8f0',
-        borderRadius: '8px',
-        background: '#f8fafc'
-      }}
-    >
-      <Suspense fallback={<p style={{ color: '#94a3b8' }}>⏳ 正在加载异步组件…</p>}>
+    <div class="av-demo">
+      <Suspense fallback={<p class="av-muted">⏳ 正在加载异步组件…</p>}>
         <AsyncCardDemo />
       </Suspense>
     </div>
   )
 }
 </script>
+
+<style>
+.av-demo {
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 16px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+}
+.av-muted {
+  opacity: 0.7;
+  margin: 0;
+}
+.av-card {
+  padding: 12px;
+  margin-top: 8px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+}
+.av-card-ok {
+  border-color: var(--vp-c-brand);
+  color: var(--vp-c-brand);
+}
+.av-demo button {
+  margin-right: 6px;
+  padding: 6px 14px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-brand);
+  color: #fff;
+  cursor: pointer;
+}
+.av-demo button:hover {
+  filter: brightness(1.1);
+}
+.av-demo input {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+}
+</style>
 
 <AsyncDemo />
 

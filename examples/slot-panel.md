@@ -13,19 +13,12 @@ description: 插槽面板示例：children 默认插槽与具名插槽。
 <script lang="tsx">
 export function PanelDemo(props: any) {
   return (
-    <div
-      style={{
-        border: '1px solid #e2e8f0',
-        borderRadius: '8px',
-        padding: '16px',
-        background: '#f8fafc'
-      }}
-    >
-      <header style={{ fontWeight: 'bold', marginBottom: '8px' }}>
+    <div class="av-demo">
+      <header class="av-panel-title">
         {props.slots?.title?.() ?? '（无标题）'}
       </header>
-      <main style={{ marginBottom: '8px' }}>{props.children}</main>
-      <footer style={{ fontSize: '12px', color: '#64748b' }}>
+      <main class="av-panel-body">{props.children}</main>
+      <footer class="av-panel-footer">
         {props.slots?.footer?.() ?? ''}
       </footer>
     </div>
@@ -36,13 +29,59 @@ export function SlotDemo() {
   return (
     <PanelDemo>
       <template slot="title">📌 公告</template>
-      <p style={{ margin: '0 0 8px' }}>这是一个面板示例，内容通过 children 传入。</p>
+      <p class="av-panel-text">这是一个面板示例，内容通过 children 传入。</p>
       <button onclick={() => alert('点击了面板按钮')}>操作</button>
       <template slot="footer">底部信息 —— footer 具名插槽</template>
     </PanelDemo>
   )
 }
 </script>
+
+<style>
+.av-demo {
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 16px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+}
+.av-panel-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.av-panel-body {
+  margin-bottom: 8px;
+}
+.av-panel-footer {
+  font-size: 12px;
+  opacity: 0.7;
+}
+.av-panel-text {
+  margin: 0 0 8px;
+}
+.av-demo button {
+  margin-right: 6px;
+  padding: 6px 14px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-brand);
+  color: #fff;
+  cursor: pointer;
+}
+.av-demo button:hover {
+  filter: brightness(1.1);
+}
+.av-demo input {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+}
+</style>
 
 <SlotDemo />
 

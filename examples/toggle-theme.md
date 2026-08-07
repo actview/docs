@@ -19,21 +19,14 @@ export function ThemeDemo() {
   return (
     <div
       class={dark.value ? 'av-theme av-theme-dark' : 'av-theme av-theme-light'}
-      style={{
-        fontFamily: 'system-ui, sans-serif',
-        padding: '16px',
-        borderRadius: '8px',
-        border: '1px solid #e2e8f0',
-        minHeight: '96px'
-      }}
     >
-      <h3 style={{ marginTop: 0 }}>主题切换</h3>
+      <h3 class="av-theme-title">主题切换</h3>
       <button onclick={() => (dark.value = !dark.value)}>
         切换到{dark.value ? '浅色' : '深色'}主题
       </button>
 
       <Transition name="av-fade">
-        <p key={dark.value ? 'dark' : 'light'} style={{ marginBottom: 0 }}>
+        <p key={dark.value ? 'dark' : 'light'} class="av-theme-text">
           当前主题：{dark.value ? '🌙 深色' : '☀️ 浅色'}
         </p>
       </Transition>
@@ -46,12 +39,19 @@ export function ThemeDemo() {
 
 <style>
 .av-theme {
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--vp-c-border);
+  min-height: 96px;
   transition: background 0.3s, color 0.3s;
 }
+/* 浅色态：跟随文档主题（dark/light 自适应） */
 .av-theme-light {
-  background: #ffffff;
-  color: #1e293b;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
 }
+/* 深色态：切换后的实际效果 */
 .av-theme-dark {
   background: #1e293b;
   color: #f8fafc;
@@ -59,7 +59,13 @@ export function ThemeDemo() {
 .av-theme-dark button {
   background: #334155;
   color: #f8fafc;
-  border: 1px solid #475569;
+  border-color: #475569;
+}
+.av-theme-title {
+  margin-top: 0;
+}
+.av-theme-text {
+  margin-bottom: 0;
 }
 .av-fade-enter-from,
 .av-fade-leave-to {
@@ -74,6 +80,16 @@ export function ThemeDemo() {
 .av-fade-leave-from {
   opacity: 1;
   transform: translateY(0);
+}
+.av-theme button {
+  margin-right: 6px;
+  padding: 6px 14px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-brand);
+  color: #fff;
+  cursor: pointer;
 }
 </style>
 

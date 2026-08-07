@@ -17,15 +17,8 @@ const name = ref('ActView')
 
 export function GreetCard(props: { name: string; onReset: () => void }) {
   return (
-    <div
-      style={{
-        padding: '12px',
-        background: '#e2e8f0',
-        borderRadius: '6px',
-        marginTop: '8px'
-      }}
-    >
-      <p style={{ margin: 0 }}>你好，<strong>{props.name}</strong>！</p>
+    <div class="av-card">
+      <p class="av-card-text">你好，<strong>{props.name}</strong>！</p>
       <button onclick={props.onReset}>重置</button>
     </div>
   )
@@ -33,15 +26,7 @@ export function GreetCard(props: { name: string; onReset: () => void }) {
 
 export function PropsDemo() {
   return (
-    <div
-      style={{
-        fontFamily: 'system-ui, sans-serif',
-        padding: '16px',
-        border: '1px solid #e2e8f0',
-        borderRadius: '8px',
-        background: '#f8fafc'
-      }}
-    >
+    <div class="av-demo">
       <input
         value={name.value}
         oninput={(e) => (name.value = e.target.value)}
@@ -52,6 +37,48 @@ export function PropsDemo() {
   )
 }
 </script>
+
+<style>
+.av-demo {
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 16px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+}
+.av-card {
+  padding: 12px;
+  margin-top: 8px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+}
+.av-card-text {
+  margin: 0 0 8px;
+}
+.av-demo button {
+  margin-right: 6px;
+  padding: 6px 14px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-brand);
+  color: #fff;
+  cursor: pointer;
+}
+.av-demo button:hover {
+  filter: brightness(1.1);
+}
+.av-demo input {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+}
+</style>
 
 <PropsDemo />
 
