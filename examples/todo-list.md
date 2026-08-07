@@ -6,7 +6,158 @@ description: 待办清单示例：reactive 数组、keyed 列表、增删与过�
 
 经典 TODO 应用：添加、完成、删除，以及按状态过滤。覆盖 `reactive` 数组的变更方法、`keyed` 列表渲染与 `computed` 过滤。
 
-## 代码
+## 在线体验
+
+真实运行的组件——添加任务、勾选完成、删除、切换过滤：
+
+<script lang="tsx">
+import { ref, reactive, computed } from 'actview'
+
+interface TodoItem {
+  id: number
+  text: string
+  done: boolean
+}
+
+const todos = reactive<TodoItem[]>([
+  { id: 1, text: '学习 ActView', done: true },
+  { id: 2, text: '写一个示例', done: false }
+])
+const todoInput = ref('')
+const todoFilter = ref<'all' | 'active' | 'done'>('all')
+let todoNextId = 3
+
+export function TodoDemo() {
+  const visible = computed(() => {
+    if (todoFilter.value === 'active') return todos.filter((t) => !t.done)
+    if (todoFilter.value === 'done') return todos.filter((t) => t.done)
+    return todos
+  })
+  const remaining = computed(() => todos.filter((t) => !t.done).length)
+
+  return (
+    <div class="av-demo">
+      <div>
+        <input
+          value={todoInput.value}
+          oninput={(e) => (todoInput.value = e.target.value)}
+          onkeydown={(e) => {
+            if (e.key !== 'Enter') return
+            const text = todoInput.value.trim()
+            if (!text) return
+            todos.push({ id: todoNextId++, text, done: false })
+            todoInput.value = ''
+          }}
+          placeholder="输入任务，回车添加"
+        />
+        <button
+          onclick={() => {
+            const text = todoInput.value.trim()
+            if (!text) return
+            todos.push({ id: todoNextId++, text, done: false })
+            todoInput.value = ''
+          }}
+        >
+          添加
+        </button>
+      </div>
+
+      <p class="av-muted">剩余 {remaining.value} 项未完成</p>
+
+      <div>
+        {(['all', 'active', 'done'] as const).map((f) => (
+          <button
+            key={f}
+            class="av-filter"
+            style={{ fontWeight: todoFilter.value === f ? 'bold' : 'normal' }}
+            onclick={() => (todoFilter.value = f)}
+          >
+            {{ all: '全部', active: '未完成', done: '已完成' }[f]}
+          </button>
+        ))}
+      </div>
+
+      <ul class="av-list">
+        {visible.value.map((todo) => (
+          <li key={todo.id}>
+            <input
+              type="checkbox"
+              checked={todo.done}
+              onchange={(e) => (todo.done = e.target.checked)}
+            />
+            <span
+              class={todo.done ? 'av-done' : ''}
+            >
+              {todo.text}
+            </span>
+            <button class="av-danger" onclick={() => {
+                const index = todos.findIndex((t) => t.id === todo.id)
+                if (index >= 0) todos.splice(index, 1)
+              }}>
+              删除
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+</script>
+
+<style>
+.av-demo {
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 16px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+}
+.av-muted {
+  opacity: 0.7;
+}
+.av-list {
+  margin-bottom: 0;
+  padding-left: 20px;
+}
+.av-list li {
+  margin: 4px 0;
+}
+.av-done {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+.av-demo button {
+  margin-right: 6px;
+  padding: 6px 14px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-brand);
+  color: #fff;
+  cursor: pointer;
+}
+.av-demo button:hover {
+  filter: brightness(1.1);
+}
+.av-demo button.av-danger {
+  background: transparent;
+  color: var(--vp-c-danger-1);
+  border-color: var(--vp-c-danger-1);
+}
+.av-demo input {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+}
+</style>
+
+<TodoDemo />
+
+## 完整代码
 
 ::: code-group
 
@@ -51,9 +202,7 @@ export function App() {
   const remaining = computed(() => todos.filter((t) => !t.done).length)
 
   return (
-    <div style={{ fontFamily: 'system-ui, sans-serif', maxWidth: '420px' }}>
-      <h1>待办清单</h1>
-
+    <div class="av-demo">
       <div>
         <input
           value={input.value}
@@ -64,12 +213,13 @@ export function App() {
         <button onclick={addTodo}>添加</button>
       </div>
 
-      <p style={{ opacity: 0.7 }}>剩余 {remaining.value} 项未完成</p>
+      <p class="av-muted">剩余 {remaining.value} 项未完成</p>
 
       <div>
         {(['all', 'active', 'done'] as Filter[]).map((f) => (
           <button
             key={f}
+            class="av-filter"
             style={{ fontWeight: filter.value === f ? 'bold' : 'normal' }}
             onclick={() => (filter.value = f)}
           >
@@ -78,7 +228,7 @@ export function App() {
         ))}
       </div>
 
-      <ul>
+      <ul class="av-list">
         {visible.value.map((todo) => (
           <li key={todo.id}>
             <input
@@ -86,15 +236,10 @@ export function App() {
               checked={todo.done}
               onchange={(e) => (todo.done = e.target.checked)}
             />
-            <span
-              style={{
-                textDecoration: todo.done ? 'line-through' : 'none',
-                opacity: todo.done ? 0.6 : 1
-              }}
-            >
-              {todo.text}
-            </span>
-            <button onclick={() => removeTodo(todo.id)}>删除</button>
+            <span class={todo.done ? 'av-done' : ''}>{todo.text}</span>
+            <button class="av-danger" onclick={() => removeTodo(todo.id)}>
+              删除
+            </button>
           </li>
         ))}
       </ul>

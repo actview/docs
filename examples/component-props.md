@@ -6,15 +6,91 @@ description: 组件与 Props 示例：父子通信与受控输入。
 
 演示组件的核心交互：父组件通过 props 传数据，子组件通过**回调 props** 上报事件（ActView 没有独立的 `emit` 机制）。
 
-## 代码
+## 在线体验
+
+真实运行的组件——修改输入框，`GreetCard` 的 props 精确更新；点击「重置」通过回调让父组件复位：
+
+<script lang="tsx">
+import { ref } from 'actview'
+
+const name = ref('ActView')
+
+export function GreetCard(props: { name: string; onReset: () => void }) {
+  return (
+    <div class="av-card">
+      <p class="av-card-text">你好，<strong>{props.name}</strong>！</p>
+      <button onclick={props.onReset}>重置</button>
+    </div>
+  )
+}
+
+export function PropsDemo() {
+  return (
+    <div class="av-demo">
+      <input
+        value={name.value}
+        oninput={(e) => (name.value = e.target.value)}
+        placeholder="输入名字…"
+      />
+      <GreetCard name={name.value} onReset={() => (name.value = 'ActView')} />
+    </div>
+  )
+}
+</script>
+
+<style>
+.av-demo {
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 16px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+}
+.av-card {
+  padding: 12px;
+  margin-top: 8px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+}
+.av-card-text {
+  margin: 0 0 8px;
+}
+.av-demo button {
+  margin-right: 6px;
+  padding: 6px 14px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-brand);
+  color: #fff;
+  cursor: pointer;
+}
+.av-demo button:hover {
+  filter: brightness(1.1);
+}
+.av-demo input {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+}
+</style>
+
+<PropsDemo />
+
+## 完整代码
 
 ::: code-group
 
 ```tsx [src/Greeting.tsx]
 export function Greeting(props: { name: string; onReset: () => void }) {
   return (
-    <div style={{ padding: '12px', background: '#f1f5f9', borderRadius: '6px' }}>
-      <p style={{ margin: 0 }}>你好，<strong>{props.name}</strong>！</p>
+    <div class="av-card">
+      <p class="av-card-text">你好，<strong>{props.name}</strong>！</p>
       <button onclick={props.onReset}>重置</button>
     </div>
   )
@@ -29,15 +105,12 @@ export function App() {
   const name = ref('ActView')
 
   return (
-    <div style={{ fontFamily: 'system-ui, sans-serif' }}>
-      <h1>组件与 Props</h1>
-
+    <div class="av-demo">
       <input
         value={name.value}
         oninput={(e) => (name.value = e.target.value)}
         placeholder="输入名字…"
       />
-
       {/* props：name 传数据，onReset 传回调 */}
       <Greeting name={name.value} onReset={() => (name.value = 'ActView')} />
     </div>

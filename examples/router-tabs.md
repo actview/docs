@@ -6,7 +6,103 @@ description: 路由标签页示例：createRouter + RouterLink + RouterView。
 
 用 `@actview/router` 做一个多标签页应用：点击导航切换页面组件，路由状态是响应式的。
 
-## 代码
+## 在线体验
+
+真实运行的组件——使用 `createRouter` + `createMemoryHistory`（内存历史）在页面内演示路由切换：
+
+<script lang="tsx">
+import { createRouter, createMemoryHistory, RouterLink, RouterView } from '@actview/router'
+import { defineComponent } from 'actview'
+
+const HomeDemo = defineComponent(function () {
+  return () => <div>🏠 首页：欢迎使用 ActView 路由！</div>
+})
+const ProfileDemo = defineComponent(function () {
+  return () => <div>👤 个人资料页</div>
+})
+const SettingsDemo = defineComponent(function () {
+  return () => <div>⚙️ 设置页</div>
+})
+
+createRouter({
+  history: createMemoryHistory('/'),
+  routes: [
+    { path: '/', component: HomeDemo },
+    { path: '/profile', component: ProfileDemo },
+    { path: '/settings', component: SettingsDemo }
+  ]
+})
+
+const tabs = [
+  { path: '/', label: '首页' },
+  { path: '/profile', label: '个人资料' },
+  { path: '/settings', label: '设置' }
+]
+
+export function RouterDemo() {
+  return (
+    <div class="av-demo">
+      <nav>
+        {tabs.map((tab) => (
+          <RouterLink key={tab.path} to={tab.path} class="av-nav-link">
+            {tab.label}
+          </RouterLink>
+        ))}
+      </nav>
+      <main class="av-router-view">
+        <RouterView />
+      </main>
+    </div>
+  )
+}
+</script>
+
+<style>
+.av-demo {
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 16px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+}
+.av-nav-link {
+  margin-right: 12px;
+  text-decoration: none;
+  color: var(--vp-c-brand);
+}
+.av-nav-link:hover {
+  text-decoration: underline;
+}
+.av-router-view {
+  margin-top: 12px;
+}
+.av-demo button {
+  margin-right: 6px;
+  padding: 6px 14px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-brand);
+  color: #fff;
+  cursor: pointer;
+}
+.av-demo button:hover {
+  filter: brightness(1.1);
+}
+.av-demo input {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+}
+</style>
+
+<RouterDemo />
+
+## 完整代码
 
 ::: code-group
 
@@ -38,22 +134,16 @@ const tabs = [
 
 export function App() {
   return (
-    <div style={{ fontFamily: 'system-ui, sans-serif', maxWidth: '480px' }}>
-      <h1>路由标签页</h1>
-
+    <div class="av-demo">
       <nav>
         {tabs.map((tab) => (
-          <RouterLink
-            key={tab.path}
-            to={tab.path}
-            style={{ marginRight: '8px', textDecoration: 'none' }}
-          >
+          <RouterLink key={tab.path} to={tab.path} class="av-nav-link">
             {tab.label}
           </RouterLink>
         ))}
       </nav>
 
-      <main style={{ marginTop: '16px' }}>
+      <main class="av-router-view">
         <RouterView />
       </main>
     </div>

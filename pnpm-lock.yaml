@@ -18,8 +18,8 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7
       '@actview/press':
-        specifier: file:C:/code/vitepress
-        version: file:C:/code/vitepress(postcss@8.5.25)
+        specifier: ^1.0.7
+        version: 1.0.7(postcss@8.5.25)
       '@actview/router':
         specifier: ^1.0.10
         version: 1.0.10
@@ -41,8 +41,8 @@ packages:
   '@actview/plugin@1.0.7':
     resolution: {integrity: sha512-T6P8Sog9KnB8EYzTZCVt3wopcKmVAgwHpYZvbdbykQM8sgJsQq/fHzUia7miL+I01U2dCY9tk0gLbk2/O+sFHg==}
 
-  '@actview/press@file:C:/code/vitepress':
-    resolution: {directory: C:/code/vitepress, type: directory}
+  '@actview/press@1.0.7':
+    resolution: {integrity: sha512-QsUW56dYKuAxEUpC6wJ4GaPjI6Fu0nv1v+uYZQXat8CclLnboecSQfTmCIvbMQjDP47diobiFCuTOmmXvokq/g==}
     hasBin: true
     peerDependencies:
       markdown-it-mathjax3: ^4
@@ -797,7 +797,7 @@ snapshots:
     dependencies:
       '@babel/core': 8.0.1
 
-  '@actview/press@file:C:/code/vitepress(postcss@8.5.25)':
+  '@actview/press@1.0.7(postcss@8.5.25)':
     dependencies:
       '@actview/core': 1.0.18
       '@actview/jsx': 1.0.11

@@ -6,7 +6,72 @@ description: 计数器示例：ref 响应式状态与事件处理。
 
 最基础的响应式示例：`ref` 保存计数，按钮事件修改状态，组件自动更新。
 
-## 代码
+## 在线体验
+
+下面的计数器就是**当前页面真实运行的 ActView 组件**——由 `<script lang="tsx">` 块定义、Markdown 正文渲染，点击按钮试试：
+
+<script lang="tsx">
+import { ref } from 'actview'
+
+const count = ref(0)
+
+export function CounterDemo() {
+  return (
+    <div class="av-demo av-demo-center">
+      <p class="av-count">{count.value}</p>
+      <div>
+        <button onclick={() => count.value--}>-1</button>
+        <button onclick={() => count.value++}>+1</button>
+        <button onclick={() => (count.value = 0)}>重置</button>
+      </div>
+    </div>
+  )
+}
+</script>
+
+<style>
+.av-demo {
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 16px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+}
+.av-demo-center {
+  text-align: center;
+}
+.av-count {
+  font-size: 40px;
+  margin: 8px 0;
+}
+.av-demo button {
+  margin-right: 6px;
+  padding: 6px 14px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-brand);
+  color: #fff;
+  cursor: pointer;
+}
+.av-demo button:hover {
+  filter: brightness(1.1);
+}
+.av-demo input {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+}
+</style>
+
+<CounterDemo />
+
+
+## 完整代码
 
 ::: code-group
 
@@ -17,9 +82,8 @@ export function App() {
   const count = ref(0)
 
   return (
-    <div style={{ textAlign: 'center', fontFamily: 'system-ui, sans-serif' }}>
-      <h1>计数器</h1>
-      <p style={{ fontSize: '48px', margin: '16px 0' }}>{count.value}</p>
+    <div class="av-demo av-demo-center">
+      <p class="av-count">{count.value}</p>
       <div>
         <button onclick={() => count.value--}>-1</button>
         <button onclick={() => count.value++}>+1</button>

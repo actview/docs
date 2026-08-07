@@ -8,8 +8,8 @@ export default defineConfig({
   // 本地 dev/build 保持根路径
   base: process.env.GITHUB_ACTIONS ? '/actview-docs/' : '/',
 
-  // plan.md 是项目计划文档，不作为站点页面编译
-  srcExclude: ['plan.md'],
+  // plan.md / docs/ 是项目内部文档，不作为站点页面编译
+  srcExclude: ['plan.md', 'docs/**'],
 
   lastUpdated: true,
   cleanUrls: true,
