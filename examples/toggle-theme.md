@@ -105,17 +105,15 @@ export function App() {
 
   return (
     <div
-      class={dark.value ? 'theme theme-dark' : 'theme theme-light'}
-      style={{ fontFamily: 'system-ui, sans-serif', minHeight: '100vh', padding: '24px' }}
+      class={dark.value ? 'av-theme av-theme-dark' : 'av-theme av-theme-light'}
     >
-      <h1>主题切换</h1>
-
+      <h3 class="av-theme-title">主题切换</h3>
       <button onclick={() => (dark.value = !dark.value)}>
         切换到{dark.value ? '浅色' : '深色'}主题
       </button>
 
-      <Transition name="fade">
-        <p key={dark.value ? 'dark' : 'light'} style={{ marginTop: '16px' }}>
+      <Transition name="av-fade">
+        <p key={dark.value ? 'dark' : 'light'} class="av-theme-text">
           当前主题：{dark.value ? '🌙 深色' : '☀️ 浅色'}
         </p>
       </Transition>
@@ -132,32 +130,58 @@ createApp(App).mount('#app')
 ```
 
 ```css [src/style.css]
-.theme {
+.av-theme {
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--vp-c-border);
+  min-height: 96px;
   transition: background 0.3s, color 0.3s;
 }
-.theme-light {
-  background: #ffffff;
-  color: #1e293b;
+.av-theme-light {
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
 }
-.theme-dark {
+.av-theme-dark {
   background: #1e293b;
   color: #f8fafc;
 }
+.av-theme-dark button {
+  background: #334155;
+  color: #f8fafc;
+  border-color: #475569;
+}
+.av-theme-title {
+  margin-top: 0;
+}
+.av-theme-text {
+  margin-bottom: 0;
+}
 
-/* Transition name="fade" 的过渡类 */
-.fade-enter-from,
-.fade-leave-to {
+/* Transition name="av-fade" 的过渡类 */
+.av-fade-enter-from,
+.av-fade-leave-to {
   opacity: 0;
   transform: translateY(-4px);
 }
-.fade-enter-active,
-.fade-leave-active {
+.av-fade-enter-active,
+.av-fade-leave-active {
   transition: opacity 0.3s, transform 0.3s;
 }
-.fade-enter-to,
-.fade-leave-from {
+.av-fade-enter-to,
+.av-fade-leave-from {
   opacity: 1;
   transform: translateY(0);
+}
+.av-theme button {
+  margin-right: 6px;
+  padding: 6px 14px;
+  font-size: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-brand);
+  color: #fff;
+  cursor: pointer;
 }
 ```
 

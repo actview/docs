@@ -66,6 +66,9 @@ export function AsyncDemo() {
   border-color: var(--vp-c-brand);
   color: var(--vp-c-brand);
 }
+.av-error {
+  color: var(--vp-c-danger-1);
+}
 .av-demo button {
   margin-right: 6px;
   padding: 6px 14px;
@@ -100,11 +103,7 @@ import { defineComponent } from 'actview'
 
 // 模拟一个"重量级"组件（真实场景可能是动态 import 的页面）
 export const HeavyCard = defineComponent(function () {
-  return () => (
-    <div style={{ padding: '16px', background: '#fef3c7', borderRadius: '8px' }}>
-      🎉 异步组件加载完成
-    </div>
-  )
+  return () => <div class="av-card av-card-ok">🎉 异步组件加载完成</div>
 })
 ```
 
@@ -124,10 +123,8 @@ export function App() {
   const showFragile = ref(false)
 
   return (
-    <div style={{ fontFamily: 'system-ui, sans-serif' }}>
-      <h1>异步加载</h1>
-
-      <Suspense fallback={<p style={{ color: '#94a3b8' }}>⏳ 正在加载异步组件…</p>}>
+    <div class="av-demo">
+      <Suspense fallback={<p class="av-muted">⏳ 正在加载异步组件…</p>}>
         <AsyncCard />
       </Suspense>
 
@@ -139,8 +136,8 @@ export function App() {
       </button>
 
       {showFragile.value && (
-        <ErrorBoundary fallback={<p style={{ color: '#dc2626' }}>⚠️ 加载失败，请稍后重试</p>}>
-          <Suspense fallback={<p style={{ color: '#94a3b8' }}>⏳ 加载中…</p>}>
+        <ErrorBoundary fallback={<p class="av-error">⚠️ 加载失败，请稍后重试</p>}>
+          <Suspense fallback={<p class="av-muted">⏳ 加载中…</p>}>
             <FragileCard />
           </Suspense>
         </ErrorBoundary>

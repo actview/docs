@@ -112,17 +112,16 @@ export function App() {
   }
 
   return (
-    <div style={{ fontFamily: 'system-ui, sans-serif' }}>
-      <h1>温度转换</h1>
+    <div class="av-demo">
       <label>
         摄氏（°C）：
         <input type="number" value={String(celsius.value)} oninput={setCelsius} />
       </label>
-      <label style={{ marginLeft: '16px' }}>
+      <label class="av-gap">
         华氏（°F）：
         <input type="number" value={String(fahrenheit.value)} oninput={setFahrenheit} />
       </label>
-      <p>
+      <p class="av-result">
         当前温度：{celsius.value}°C = {fahrenheit.value}°F
       </p>
     </div>

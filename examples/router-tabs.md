@@ -134,22 +134,16 @@ const tabs = [
 
 export function App() {
   return (
-    <div style={{ fontFamily: 'system-ui, sans-serif', maxWidth: '480px' }}>
-      <h1>路由标签页</h1>
-
+    <div class="av-demo">
       <nav>
         {tabs.map((tab) => (
-          <RouterLink
-            key={tab.path}
-            to={tab.path}
-            style={{ marginRight: '8px', textDecoration: 'none' }}
-          >
+          <RouterLink key={tab.path} to={tab.path} class="av-nav-link">
             {tab.label}
           </RouterLink>
         ))}
       </nav>
 
-      <main style={{ marginTop: '16px' }}>
+      <main class="av-router-view">
         <RouterView />
       </main>
     </div>

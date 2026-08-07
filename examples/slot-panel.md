@@ -92,12 +92,12 @@ export function SlotDemo() {
 ```tsx [src/Panel.tsx]
 export function Panel(props: any) {
   return (
-    <div style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '16px' }}>
-      <header style={{ fontWeight: 'bold', marginBottom: '8px' }}>
+    <div class="av-demo">
+      <header class="av-panel-title">
         {props.slots?.title?.() ?? '（无标题）'}
       </header>
-      <main style={{ marginBottom: '8px' }}>{props.children}</main>
-      <footer style={{ fontSize: '12px', color: '#64748b' }}>
+      <main class="av-panel-body">{props.children}</main>
+      <footer class="av-panel-footer">
         {props.slots?.footer?.() ?? ''}
       </footer>
     </div>
@@ -110,20 +110,16 @@ import { Panel } from './Panel'
 
 export function App() {
   return (
-    <div style={{ fontFamily: 'system-ui, sans-serif', maxWidth: '480px' }}>
-      <h1>插槽面板</h1>
+    <Panel>
+      {/* 具名插槽：template slot="名称" */}
+      <template slot="title">📌 公告</template>
 
-      <Panel>
-        {/* 具名插槽：template slot="名称" */}
-        <template slot="title">📌 公告</template>
+      {/* 默认插槽：直接写在标签内的内容 */}
+      <p class="av-panel-text">这是一个面板示例，内容通过 children 传入。</p>
+      <button onclick={() => alert('点击了面板按钮')}>操作</button>
 
-        {/* 默认插槽：直接写在标签内的内容 */}
-        <p>这是一个面板示例，内容通过 children 传入。</p>
-        <button onclick={() => alert('点击了面板按钮')}>操作</button>
-
-        <template slot="footer">底部信息 —— footer 具名插槽</template>
-      </Panel>
-    </div>
+      <template slot="footer">底部信息 —— footer 具名插槽</template>
+    </Panel>
   )
 }
 ```

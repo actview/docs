@@ -202,9 +202,7 @@ export function App() {
   const remaining = computed(() => todos.filter((t) => !t.done).length)
 
   return (
-    <div style={{ fontFamily: 'system-ui, sans-serif', maxWidth: '420px' }}>
-      <h1>待办清单</h1>
-
+    <div class="av-demo">
       <div>
         <input
           value={input.value}
@@ -215,12 +213,13 @@ export function App() {
         <button onclick={addTodo}>添加</button>
       </div>
 
-      <p style={{ opacity: 0.7 }}>剩余 {remaining.value} 项未完成</p>
+      <p class="av-muted">剩余 {remaining.value} 项未完成</p>
 
       <div>
         {(['all', 'active', 'done'] as Filter[]).map((f) => (
           <button
             key={f}
+            class="av-filter"
             style={{ fontWeight: filter.value === f ? 'bold' : 'normal' }}
             onclick={() => (filter.value = f)}
           >
@@ -229,7 +228,7 @@ export function App() {
         ))}
       </div>
 
-      <ul>
+      <ul class="av-list">
         {visible.value.map((todo) => (
           <li key={todo.id}>
             <input
@@ -237,15 +236,10 @@ export function App() {
               checked={todo.done}
               onchange={(e) => (todo.done = e.target.checked)}
             />
-            <span
-              style={{
-                textDecoration: todo.done ? 'line-through' : 'none',
-                opacity: todo.done ? 0.6 : 1
-              }}
-            >
-              {todo.text}
-            </span>
-            <button onclick={() => removeTodo(todo.id)}>删除</button>
+            <span class={todo.done ? 'av-done' : ''}>{todo.text}</span>
+            <button class="av-danger" onclick={() => removeTodo(todo.id)}>
+              删除
+            </button>
           </li>
         ))}
       </ul>

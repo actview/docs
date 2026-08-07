@@ -140,9 +140,8 @@ export function App() {
   })
 
   return (
-    <div style={{ fontFamily: 'system-ui, sans-serif' }}>
-      <h1>秒表</h1>
-      <p style={{ fontSize: '48px', margin: '16px 0' }}>{elapsed.value} 秒</p>
+    <div class="av-demo av-demo-center">
+      <p class="av-count">{elapsed.value} 秒</p>
       <div>
         {!running.value ? (
           <button onclick={start}>开始</button>

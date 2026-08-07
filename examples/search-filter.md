@@ -141,17 +141,15 @@ export function App() {
   })
 
   return (
-    <div style={{ fontFamily: 'system-ui, sans-serif', maxWidth: '480px' }}>
-      <h1>水果搜索</h1>
-
+    <div class="av-demo">
       <input
+        class="av-block"
         value={keyword.value}
         oninput={(e) => (keyword.value = e.target.value)}
         placeholder="输入关键词过滤…"
-        style={{ width: '100%', boxSizing: 'border-box' }}
       />
 
-      <label style={{ display: 'block', margin: '8px 0' }}>
+      <label class="av-check">
         <input
           type="checkbox"
           checked={onlyLong.value}
@@ -160,12 +158,12 @@ export function App() {
         只看两个字以上的名称
       </label>
 
-      <p style={{ opacity: 0.7 }}>
+      <p class="av-muted">
         共 {filtered.value.length} 项
         {keyword.value && `（关键词：${keyword.value}）`}
       </p>
 
-      <ul>
+      <ul class="av-list">
         {filtered.value.map((name) => (
           <li key={name}>{name}</li>
         ))}

@@ -89,8 +89,8 @@ export function PropsDemo() {
 ```tsx [src/Greeting.tsx]
 export function Greeting(props: { name: string; onReset: () => void }) {
   return (
-    <div style={{ padding: '12px', background: '#f1f5f9', borderRadius: '6px' }}>
-      <p style={{ margin: 0 }}>你好，<strong>{props.name}</strong>！</p>
+    <div class="av-card">
+      <p class="av-card-text">你好，<strong>{props.name}</strong>！</p>
       <button onclick={props.onReset}>重置</button>
     </div>
   )
@@ -105,15 +105,12 @@ export function App() {
   const name = ref('ActView')
 
   return (
-    <div style={{ fontFamily: 'system-ui, sans-serif' }}>
-      <h1>组件与 Props</h1>
-
+    <div class="av-demo">
       <input
         value={name.value}
         oninput={(e) => (name.value = e.target.value)}
         placeholder="输入名字…"
       />
-
       {/* props：name 传数据，onReset 传回调 */}
       <Greeting name={name.value} onReset={() => (name.value = 'ActView')} />
     </div>

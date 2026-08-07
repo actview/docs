@@ -82,9 +82,8 @@ export function App() {
   const count = ref(0)
 
   return (
-    <div style={{ textAlign: 'center', fontFamily: 'system-ui, sans-serif' }}>
-      <h1>计数器</h1>
-      <p style={{ fontSize: '48px', margin: '16px 0' }}>{count.value}</p>
+    <div class="av-demo av-demo-center">
+      <p class="av-count">{count.value}</p>
       <div>
         <button onclick={() => count.value--}>-1</button>
         <button onclick={() => count.value++}>+1</button>
