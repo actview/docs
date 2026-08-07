@@ -19,7 +19,7 @@ features:
     details: ref / reactive / computed / watch，数据变化自动触发组件重渲染，无需手动订阅。
   - icon: 🧩
     title: 纯 JSX
-    details: 相比 Vue SFC 无需记忆 v-if、v-for、v-model 等模板指令——条件、循环、事件绑定都是原生 JavaScript 表达式，类型安全、组合灵活，一条 JSX 语法走天下。
+    details: 无需记忆 v-if、v-for 等模板指令，条件与循环皆是原生 JS 表达式，更灵活、更类型安全。
   - icon: 🪶
     title: 轻量小巧
     details: 运行时 + 响应式 + 路由分层清晰，源码易读，适合学习与二次开发。
