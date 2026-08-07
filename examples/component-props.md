@@ -6,7 +6,56 @@ description: 组件与 Props 示例：父子通信与受控输入。
 
 演示组件的核心交互：父组件通过 props 传数据，子组件通过**回调 props** 上报事件（ActView 没有独立的 `emit` 机制）。
 
-## 代码
+## 在线体验
+
+真实运行的组件——修改输入框，`GreetCard` 的 props 精确更新；点击「重置」通过回调让父组件复位：
+
+<script lang="tsx">
+import { ref } from 'actview'
+
+const name = ref('ActView')
+
+export function GreetCard(props: { name: string; onReset: () => void }) {
+  return (
+    <div
+      style={{
+        padding: '12px',
+        background: '#e2e8f0',
+        borderRadius: '6px',
+        marginTop: '8px'
+      }}
+    >
+      <p style={{ margin: 0 }}>你好，<strong>{props.name}</strong>！</p>
+      <button onclick={props.onReset}>重置</button>
+    </div>
+  )
+}
+
+export function PropsDemo() {
+  return (
+    <div
+      style={{
+        fontFamily: 'system-ui, sans-serif',
+        padding: '16px',
+        border: '1px solid #e2e8f0',
+        borderRadius: '8px',
+        background: '#f8fafc'
+      }}
+    >
+      <input
+        value={name.value}
+        oninput={(e) => (name.value = e.target.value)}
+        placeholder="输入名字…"
+      />
+      <GreetCard name={name.value} onReset={() => (name.value = 'ActView')} />
+    </div>
+  )
+}
+</script>
+
+<PropsDemo />
+
+## 完整代码
 
 ::: code-group
 

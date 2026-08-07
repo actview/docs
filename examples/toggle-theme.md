@@ -6,7 +6,78 @@ description: 主题切换示例：类样式绑定与 Transition 过渡。
 
 用 `ref` + 类样式绑定实现浅色/深色主题切换，`Transition` 为内容切换添加过渡动画。
 
-## 代码
+## 在线体验
+
+真实运行的组件——点击按钮切换主题，内容带有淡入淡出过渡：
+
+<script lang="tsx">
+import { ref, Transition } from 'actview'
+
+const dark = ref(false)
+
+export function ThemeDemo() {
+  return (
+    <div
+      class={dark.value ? 'av-theme av-theme-dark' : 'av-theme av-theme-light'}
+      style={{
+        fontFamily: 'system-ui, sans-serif',
+        padding: '16px',
+        borderRadius: '8px',
+        border: '1px solid #e2e8f0',
+        minHeight: '96px'
+      }}
+    >
+      <h3 style={{ marginTop: 0 }}>主题切换</h3>
+      <button onclick={() => (dark.value = !dark.value)}>
+        切换到{dark.value ? '浅色' : '深色'}主题
+      </button>
+
+      <Transition name="av-fade">
+        <p key={dark.value ? 'dark' : 'light'} style={{ marginBottom: 0 }}>
+          当前主题：{dark.value ? '🌙 深色' : '☀️ 浅色'}
+        </p>
+      </Transition>
+    </div>
+  )
+}
+</script>
+
+<ThemeDemo />
+
+<style>
+.av-theme {
+  transition: background 0.3s, color 0.3s;
+}
+.av-theme-light {
+  background: #ffffff;
+  color: #1e293b;
+}
+.av-theme-dark {
+  background: #1e293b;
+  color: #f8fafc;
+}
+.av-theme-dark button {
+  background: #334155;
+  color: #f8fafc;
+  border: 1px solid #475569;
+}
+.av-fade-enter-from,
+.av-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+.av-fade-enter-active,
+.av-fade-leave-active {
+  transition: opacity 0.3s, transform 0.3s;
+}
+.av-fade-enter-to,
+.av-fade-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
+
+## 完整代码
 
 ::: code-group
 

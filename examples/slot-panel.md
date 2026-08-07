@@ -6,7 +6,47 @@ description: 插槽面板示例：children 默认插槽与具名插槽。
 
 演示 ActView 的插槽体系：`props.children` 默认插槽 + `<template slot="name">` 具名插槽。
 
-## 代码
+## 在线体验
+
+真实运行的组件——面板展示默认插槽内容与两个具名插槽：
+
+<script lang="tsx">
+export function PanelDemo(props: any) {
+  return (
+    <div
+      style={{
+        border: '1px solid #e2e8f0',
+        borderRadius: '8px',
+        padding: '16px',
+        background: '#f8fafc'
+      }}
+    >
+      <header style={{ fontWeight: 'bold', marginBottom: '8px' }}>
+        {props.slots?.title?.() ?? '（无标题）'}
+      </header>
+      <main style={{ marginBottom: '8px' }}>{props.children}</main>
+      <footer style={{ fontSize: '12px', color: '#64748b' }}>
+        {props.slots?.footer?.() ?? ''}
+      </footer>
+    </div>
+  )
+}
+
+export function SlotDemo() {
+  return (
+    <PanelDemo>
+      <template slot="title">📌 公告</template>
+      <p style={{ margin: '0 0 8px' }}>这是一个面板示例，内容通过 children 传入。</p>
+      <button onclick={() => alert('点击了面板按钮')}>操作</button>
+      <template slot="footer">底部信息 —— footer 具名插槽</template>
+    </PanelDemo>
+  )
+}
+</script>
+
+<SlotDemo />
+
+## 完整代码
 
 ::: code-group
 

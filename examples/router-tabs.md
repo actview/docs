@@ -6,7 +6,72 @@ description: 路由标签页示例：createRouter + RouterLink + RouterView。
 
 用 `@actview/router` 做一个多标签页应用：点击导航切换页面组件，路由状态是响应式的。
 
-## 代码
+## 在线体验
+
+真实运行的组件——使用 `createRouter` + `createMemoryHistory`（内存历史）在页面内演示路由切换：
+
+<script lang="tsx">
+import { createRouter, createMemoryHistory, RouterLink, RouterView } from '@actview/router'
+import { defineComponent } from 'actview'
+
+const HomeDemo = defineComponent(function () {
+  return () => <div>🏠 首页：欢迎使用 ActView 路由！</div>
+})
+const ProfileDemo = defineComponent(function () {
+  return () => <div>👤 个人资料页</div>
+})
+const SettingsDemo = defineComponent(function () {
+  return () => <div>⚙️ 设置页</div>
+})
+
+createRouter({
+  history: createMemoryHistory('/'),
+  routes: [
+    { path: '/', component: HomeDemo },
+    { path: '/profile', component: ProfileDemo },
+    { path: '/settings', component: SettingsDemo }
+  ]
+})
+
+const tabs = [
+  { path: '/', label: '首页' },
+  { path: '/profile', label: '个人资料' },
+  { path: '/settings', label: '设置' }
+]
+
+export function RouterDemo() {
+  return (
+    <div
+      style={{
+        fontFamily: 'system-ui, sans-serif',
+        padding: '16px',
+        border: '1px solid #e2e8f0',
+        borderRadius: '8px',
+        background: '#f8fafc'
+      }}
+    >
+      <nav>
+        {tabs.map((tab) => (
+          <RouterLink
+            key={tab.path}
+            to={tab.path}
+            style={{ marginRight: '12px', textDecoration: 'none' }}
+          >
+            {tab.label}
+          </RouterLink>
+        ))}
+      </nav>
+      <main style={{ marginTop: '12px' }}>
+        <RouterView />
+      </main>
+    </div>
+  )
+}
+</script>
+
+<RouterDemo />
+
+## 完整代码
 
 ::: code-group
 
