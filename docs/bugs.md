@@ -84,4 +84,75 @@
 
 ---
 
+## Bug #2：`pnpm build` + `pnpm preview` 打开页面报 `Cannot read properties of undefined (reading 'has')`
+
+- **状态**：已定位（未修复）
+- **涉及**：ActPress（`@actview/press`）生产构建的 `manualChunks` 拆分配置（`src/node/build/bundle.ts`）
+- **发现版本**：`@actview/press` npm 1.0.4 / 1.0.5（`^1.0.1` 范围实际解析版本）
+
+### 问题出现场景
+
+1. 构建并预览：
+   ```bash
+   pnpm build
+   pnpm preview
+   ```
+2. 浏览器打开任意页面，控制台报错（应用崩溃）：
+   ```
+   theme.CdudF1wV.js:1 Uncaught TypeError: Cannot read properties of undefined (reading 'has')
+       at _ (theme.CdudF1wV.js:1:2446)
+       at $ (theme.CdudF1wV.js:1:4536)
+       at framework.CWwwJGlJ.js:1:3395
+   ```
+
+### 现象要点
+
+- 仅**生产构建产物**（build + preview / 部署到 Pages）出现；dev 模式正常（dev 不经 `manualChunks` 拆分）；
+- 页面 JS 加载即崩溃（模块初始化阶段），页面空白或无交互；
+- 产物 chunk 文件名固定：`assets/chunks/framework.*.js`、`assets/chunks/theme.*.js`（build 日志始终伴随警告 `Circular chunk: framework -> theme -> framework. Please adjust the manual chunk logic for these chunks.`）。
+
+### 根因（含证据）
+
+核心：**`manualChunks` 把产物拆成 `framework` 与 `theme` 两个互相 import 的 chunk（循环依赖）；浏览器加载时 `framework` 模块顶层在 `theme` 初始化完成前就调用 `readonly(siteData)`，而 `theme` 中的 `rawSet`（`var lt = new WeakSet`）尚未赋值（var 提升为 `undefined`）→ `lt.has(...)` 崩溃。**
+
+证据链（产物为 `.vitepress/dist/assets/chunks/`，与报错 hash 完全一致）：
+
+1. **报错位置还原**（`theme.CdudF1wV.js`）：
+   - `:1:2446` 函数 `_` = `shouldProxy`：`return (Array.isArray(e)||Ot(e)) && !lt.has(e) && ...` —— 崩溃点 `lt.has(e)`，`lt` 为 undefined
+   - `:1:4536` 函数 `$` = `readonly()`：调用 `_`
+   - `var lt = new WeakSet`（`markRaw` 的 `rawSet`）在 theme 模块内声明
+2. **framework 调用点**（`framework.CWwwJGlJ.js:1:3395`）：
+   ```js
+   const ne = window.__VP_SITE_DATA__;
+   ...
+   const v = ye(Y(ne));   // = ref(readonly(siteData))  ← 模块顶层立即执行！
+   ```
+   `Y` 即 theme 导出的 `readonly`。
+3. **循环依赖（chunk 互相 import）**：
+   - `theme` 开头：`import{...} from "./framework.CWwwJGlJ.js"`
+   - `framework` 开头：`import{r as Y, s as Q, ...} from "./theme.CdudF1wV.js"`
+4. **入口执行顺序**（`app.*.js`）：`import theme` 在前、`import framework` 在后。
+   浏览器加载顺序：入口 → theme → framework（theme 的 import 触发 framework）→ framework 顶层执行 `ref(readonly(siteData))` 时，**theme 还停在 `import framework` 处，`var lt = new WeakSet` 尚未执行** → `lt` 为 undefined → 崩溃。
+5. **拆分配置来源**（`C:\code\vitepress\src\node\build\bundle.ts:106-137`）：
+   - `framework` chunk：`client/app` 代码（含 `data.ts` 顶层的 `siteDataRef = shallowRef(readonly(siteData))`）
+   - `theme` chunk：`client/theme-default` + 被主题静态引用的依赖（**`@actview/core` 的响应式代码被打进 theme**）
+   - `excludedModules = ['/@siteData', clientDir]`（`:23`）本意是避免循环，但**没有排除 `@actview/core`** → framework 顶层用 `readonly`（在 theme 里）→ 循环未消除
+
+### 为什么是「build + preview 才出现」
+
+这是 **ESM 运行时模块初始化顺序**问题：build 只打包不执行浏览器代码；preview 打开页面时浏览器按「入口 → theme → framework」顺序加载并执行模块，循环依赖 + framework 顶层立即初始化触发崩溃。
+
+### 影响范围
+
+- 所有生产构建（`pnpm build` / GitHub Pages 部署）产物页面打开即崩溃；
+- dev 模式不受影响。
+
+### 修复方向建议
+
+1. 在 `bundle.ts` 的 `excludedModules` 中加入 `@actview/core`（以及 `@actview/jsx`、`actview`、`@actview/router` 等 framework 与 theme 共用的包），避免它们被打进 theme chunk 造成循环；
+2. 或调整 `manualChunks`，消除 framework ↔ theme 循环（合并/重新划分 chunk）；
+3. 或把 `client/app/data.ts` 顶层的 `readonly(siteData)` 初始化延迟到 `createApp()` 调用时（避免模块加载期依赖其他 chunk）。
+
+---
+
 <!-- 后续 bug 在此追加 -->
