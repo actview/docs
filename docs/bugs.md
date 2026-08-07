@@ -164,4 +164,67 @@
 
 ---
 
+## Bug #3：点击主题切换按钮报 `Cannot set property value of #<ComputedRefImpl> which has only a getter`
+
+- **状态**：已定位（未修复）
+- **涉及**：ActPress（`@actview/press`）主题外观切换逻辑（`dist/client/app/data.js` 的 `useDark` + `dist/client/theme-default/components/VPSwitchAppearance.js`）
+- **发现版本**：`@actview/press` npm **1.0.7**（dev 与 build 产物均复现）
+
+### 问题出现场景
+
+1. `pnpm dev`（或 `pnpm build` + `pnpm preview`）启动文档站；
+2. 点击导航栏右上角的**外观切换按钮**（深色/浅色主题切换，`VPSwitchAppearance`）；
+3. 控制台报错：
+   ```
+   VPSwitchAppearance.js?v=c6734524:9 Uncaught TypeError: Cannot set property value of #<ComputedRefImpl> which has only a getter
+       at vei.<computed>.toggleAppearance [as value] (VPSwitchAppearance.js?v=c6734524:9:18)
+       at vei.<computed> (index.js:1235:15)
+   ```
+   主题不切换，按钮交互失效。
+
+### 现象要点
+
+- 仅点击外观切换按钮时报错；其余主题/导航功能正常；
+- dev 与生产构建均复现（纯运行时逻辑问题，与构建方式无关）；
+- 1.0.7 修复 Bug #2（页面能打开）后此问题随即暴露。
+
+### 根因（含证据）
+
+核心：**ActPress 从 Vue/VitePress 移植主题切换逻辑时，`useDark()` 的 `isDark` 被实现为「只有 getter 的只读 `computed`」（ActView 的 `computed` 不支持 setter），但 `toggleAppearance` 仍沿用 Vue 版「可写 isDark」的写法（`isDark.value = !isDark.value`）→ 给只读 ComputedRef 赋值 → 报错。**
+
+证据链（`@actview/press@1.0.7` dist）：
+
+1. **报错点**（`dist/client/theme-default/components/VPSwitchAppearance.js:9`）：
+   ```js
+   const { isDark, theme } = useData();
+   const toggleAppearance = () => {
+       isDark.value = !isDark.value;   // ← 给 isDark.value 赋值
+   };
+   ```
+2. **`isDark` 是只读 ComputedRef**（`dist/client/app/data.js` 的 `useDark()`）：
+   ```js
+   const preference = ref(stored ?? initialValue);
+   const preferredDark = usePreferredDark();
+   const isDark = computed(() =>
+       preference.value === 'dark' ||
+       (preference.value === 'auto' && preferredDark.value));   // ← 只有 getter！
+   ...
+   return isDark;
+   ```
+3. **ActView core 的 `computed` 只支持 getter**：`@actview/core` 的 `computed.ts` 签名为 `function computed<T>(getter: () => T): ComputedRef<T>`，**没有可写 computed（`{ get, set }` 对象形式）**。
+
+### 触发条件与影响
+
+- 所有带外观切换按钮的页面，点击即崩（dev 与 build 产物一致）；
+- 与具体文档内容无关。
+
+### 修复方向建议
+
+在 ActPress 侧修复（文档站无代码可改）：
+1. `toggleAppearance` 改为写 `preference`（如 `preference.value = isDark.value ? 'light' : 'dark'`），而不是写只读的 `isDark.value`；
+2. 或让 `useDark` 返回带 `setAppearance(v)` 的对象，由 `toggleAppearance` 调用；
+3. 或为 ActView 的 `computed` 增加可写形式支持（框架 API 扩展，改动更大）。
+
+---
+
 <!-- 后续 bug 在此追加 -->
