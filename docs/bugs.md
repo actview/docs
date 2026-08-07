@@ -166,7 +166,7 @@
 
 ## Bug #3：点击主题切换按钮报 `Cannot set property value of #<ComputedRefImpl> which has only a getter`
 
-- **状态**：已定位（未修复）
+- **状态**：✅ 已解决（`@actview/press` **1.0.8**，2026-08 发布；修复验证见文末）
 - **涉及**：ActPress（`@actview/press`）主题外观切换逻辑（`dist/client/app/data.js` 的 `useDark` + `dist/client/theme-default/components/VPSwitchAppearance.js`）
 - **发现版本**：`@actview/press` npm **1.0.7**（dev 与 build 产物均复现）
 
@@ -224,6 +224,15 @@
 1. `toggleAppearance` 改为写 `preference`（如 `preference.value = isDark.value ? 'light' : 'dark'`），而不是写只读的 `isDark.value`；
 2. 或让 `useDark` 返回带 `setAppearance(v)` 的对象，由 `toggleAppearance` 调用；
 3. 或为 ActView 的 `computed` 增加可写形式支持（框架 API 扩展，改动更大）。
+
+### 修复验证（@actview/press 1.0.8）
+
+依赖升级到 `1.0.8` 后检查 dist：
+
+- ✅ `VPSwitchAppearance` 的 `toggleAppearance` 改为调用 `setAppearance(isDark.value ? 'light' : 'dark')`，**不再直接写只读的 `isDark.value`**；
+- ✅ `useDark()` 新增 `setAppearance(value)`：写底层 `preference.value` 并持久化 `localStorage`，`useData()` 返回 `{ isDark, setAppearance }`；
+- ✅ 源码注释明确引用本 Bug（"Cannot set property value ... only a getter"，Bug #3）；
+- ✅ `pnpm build` 无 `Circular chunk` 警告、`pnpm preview` 冒烟 HTTP 200。
 
 ---
 

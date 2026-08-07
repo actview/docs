@@ -11,7 +11,7 @@
     "@actview/core": "^1.0.18",
     "@actview/jsx": "^1.0.11",
     "@actview/plugin": "^1.0.7",
-    "@actview/press": "^1.0.7",
+    "@actview/press": "^1.0.8",
     "@actview/router": "^1.0.10",
     "actview": "^1.0.17"
   },
