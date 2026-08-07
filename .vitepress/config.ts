@@ -6,6 +6,7 @@ export default defineConfig({
 
   // GitHub Actions 构建（部署到 GitHub Pages 子路径）时使用 /actview-docs/，
   // 本地 dev/build 保持根路径
+  // @ts-ignore
   base: process.env.GITHUB_ACTIONS ? '/actview-docs/' : '/',
 
   // plan.md / docs/ 是项目内部文档，不作为站点页面编译

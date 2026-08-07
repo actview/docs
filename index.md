@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: ActView
-  text: 轻量级响应式 JSX 框架
-  tagline: 拥有类似 Vue 的响应式 API，并具备 JSX 写法的响应式前端开发框架。
+  text: 响应式前端开发框架
+  tagline: 拥有类似 Vue 的响应式 API，并具备 JSX 写法的前端开发框架。
   actions:
     - theme: brand
       text: 快速上手
@@ -19,7 +19,7 @@ features:
     details: ref / reactive / computed / watch，数据变化自动触发组件重渲染，无需手动订阅。
   - icon: 🧩
     title: 纯 JSX
-    details: 组件就是返回 JSX 的函数，配合 defineComponent 获得 Vue 风格 setup + render 结构。
+    details: 相比 Vue SFC 无需记忆 v-if、v-for、v-model 等模板指令——条件、循环、事件绑定都是原生 JavaScript 表达式，类型安全、组合灵活，一条 JSX 语法走天下。
   - icon: 🪶
     title: 轻量小巧
     details: 运行时 + 响应式 + 路由分层清晰，源码易读，适合学习与二次开发。
