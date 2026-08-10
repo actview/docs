@@ -31,6 +31,9 @@ export default defineConfig({
         '@demo': fileURLToPath(new URL('./demo', import.meta.url))
       }
     },
+    optimizeDeps: {
+      include: ['@actview/jsx/jsx-dev-runtime']
+    },
     plugins: [demoTransform()]
   },
 
