@@ -90,9 +90,43 @@
   --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
 }
 
-.av-demo-block .av-demo-source {
+.av-demo-block .av-demo-source-wrap {
   overflow: hidden;
   transition: max-height 0.35s ease-in-out;
+  background: var(--vp-code-block-bg);
+}
+
+.av-demo-block .av-demo-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 8px 8px 0;
+  background: var(--vp-c-bg);
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+
+.av-demo-block .av-demo-tab {
+  padding: 4px 12px;
+  font-size: 12px;
+  font-family: var(--vp-font-family-mono);
+  color: var(--vp-c-text-2);
+  background: transparent;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  cursor: pointer;
+}
+
+.av-demo-block .av-demo-tab:hover {
+  color: var(--vp-c-text-1);
+}
+
+.av-demo-block .av-demo-tab.active {
+  color: var(--vp-c-brand-1);
+  background: var(--vp-c-bg-soft);
+  border-color: var(--vp-c-divider);
+}
+
+.av-demo-block .av-demo-source {
   background: var(--vp-code-block-bg);
 }
 

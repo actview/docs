@@ -1,33 +1,63 @@
 import { onMounted, ref } from 'actview'
 import './demo.css'
 
+interface DemoFile {
+  path: string
+  lang: string
+  raw: string
+  html: string
+}
+
 export function Demo(props: any = {}) {
   const expanded = ref(false)
   const copied = ref(false)
+  const active = ref(0)
   const sourceBox = ref<HTMLElement | undefined>(undefined)
+  const sourceWrap = ref<HTMLElement | undefined>(undefined)
   const sourceMax = ref(0)
   let timer: ReturnType<typeof setTimeout> | undefined
 
   const show = props.show !== 'false'
-  const sourceHtml = decodeURIComponent(props.source ?? '')
-  const sourceText = decodeURIComponent(props['raw-source'] ?? '')
   const description = decodeURIComponent(props.description ?? '')
   const path = props.path ?? ''
 
-  onMounted(() => {
-    if (sourceBox.value && sourceHtml) {
-      sourceBox.value.innerHTML = sourceHtml
+  const files: DemoFile[] = (() => {
+    try {
+      const value = JSON.parse(decodeURIComponent(props.source ?? '[]'))
+      return Array.isArray(value) ? value : []
+    } catch {
+      return []
     }
-  })
+  })()
+
+  const renderSource = () => {
+    const file = files[active.value]
+    if (sourceBox.value && file) {
+      sourceBox.value.innerHTML = file.html
+    }
+    if (sourceWrap.value) {
+      sourceMax.value = sourceWrap.value.scrollHeight
+    }
+  }
+
+  onMounted(renderSource)
+
+  const setActive = (i: number) => {
+    if (active.value === i) return
+    active.value = i
+    renderSource()
+  }
 
   const toggleSource = () => {
     expanded.value = !expanded.value
-    sourceMax.value = expanded.value && sourceBox.value ? sourceBox.value.scrollHeight : 0
+    sourceMax.value = expanded.value && sourceWrap.value ? sourceWrap.value.scrollHeight : 0
   }
 
   const copyCode = async () => {
+    const raw = files[active.value]?.raw
+    if (!raw) return
     try {
-      await navigator.clipboard.writeText(sourceText)
+      await navigator.clipboard.writeText(raw)
       copied.value = true
       clearTimeout(timer)
       timer = setTimeout(() => {
@@ -68,10 +98,26 @@ export function Demo(props: any = {}) {
         </div>
       )}
       <div
-        ref={sourceBox}
-        class="av-demo-source"
+        ref={sourceWrap}
+        class="av-demo-source-wrap"
         style={{ maxHeight: sourceMax.value + 'px' }}
-      ></div>
+      >
+        {files.length > 1 && (
+          <div class="av-demo-tabs">
+            {files.map((file, i) => (
+              <button
+                type="button"
+                key={file.path}
+                class={['av-demo-tab', active.value === i && 'active'].filter(Boolean).join(' ')}
+                onclick={() => setActive(i)}
+              >
+                {file.path.split('/').pop()}.{file.lang}
+              </button>
+            ))}
+          </div>
+        )}
+        <div ref={sourceBox} class="av-demo-source"></div>
+      </div>
     </div>
   )
 }

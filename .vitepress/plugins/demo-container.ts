@@ -8,6 +8,11 @@ const examplesRoot = path.resolve(docRoot, 'examples/demo')
 export const camelize = (s: string) =>
   s.replace(/[\/\-.]+(\w)/g, (_, c) => c.toUpperCase()).replace(/^\w/, (c) => c.toUpperCase())
 
+/** 示例文件引用：无扩展名默认补 .tsx（如 common.css 已带扩展名则原样使用） */
+const fileRE = /\.[a-z0-9]+$/i
+export const resolveDemoFile = (ref: string) => (fileRE.test(ref) ? ref : `${ref}.tsx`)
+export const demoLang = (ref: string) => (fileRE.test(ref) ? ref.split('.').pop()!.toLowerCase() : 'tsx')
+
 export interface DemoContainerOpts {
   validate?: (params: string) => boolean
   render?: (tokens: any[], idx: number) => string
@@ -15,11 +20,12 @@ export interface DemoContainerOpts {
 
 /**
  * :::demo
- * counter/basic [show]
+ * counter/basic[,common.css,...] [show]
  * :::
  *
- * 读取 examples/demo/<path>.tsx 作为实时示例源码。源码高亮由 renderAsync 包裹器
- * （highlightDemoSource）在渲染完成后把 demo-src 占位替换为 markdown-it 高亮后的 HTML。
+ * 逗号分隔多个示例文件：第一个为展示组件，其余作为源码标签页。
+ * 源码高亮由 renderAsync 包裹器（highlightDemoSource）在渲染完成后把
+ * demo-src 占位替换为 markdown-it 高亮后的 HTML（JSON 数组）。
  */
 export function createDemoContainer(): DemoContainerOpts {
   return {
@@ -31,39 +37,37 @@ export function createDemoContainer(): DemoContainerOpts {
       const info = tokens[idx].info.trim().match(/^demo\s*(.*)$/)
       const description = info && info[1] ? info[1] : ''
       const bodyParts = (tokens[idx + 2].children?.[0]?.content ?? '').split(/\s+/).filter(Boolean)
-      const sourceFile = bodyParts[0]
+      const files = (bodyParts[0] ?? '')
+        .split(',')
+        .map((s: string) => s.trim())
+        .filter(Boolean)
       const show = bodyParts[1] !== 'false'
 
-      // 容器正文（示例路径）仅作为数据消费，隐藏其渲染
+      // 容器正文（示例文件列表）仅作为数据消费，隐藏其渲染
       for (let i = idx + 1; i < tokens.length; i++) {
         if (tokens[i].type === 'container_demo_close') break
         tokens[i].hidden = true
         if (tokens[i].type === 'inline') tokens[i].children = []
       }
 
-      const absPath = path.resolve(examplesRoot, `${sourceFile}.tsx`)
-      let source = ''
-      try {
-        source = fs.readFileSync(absPath, 'utf-8')
-      } catch {
-        throw new Error(`[demo] 示例文件不存在: ${absPath}（请检查 :::demo 引用的路径）`)
+      const mainFile = files[0]
+      if (!mainFile) {
+        throw new Error(`[demo] :::demo 缺少示例文件路径（例如 :::demo\ncounter/basic\n:::）`)
       }
-      if (!source) throw new Error(`[demo] 示例文件为空: ${absPath}`)
 
-      const compName = 'Ep' + camelize(sourceFile)
-      return `<Demo demo-src="${sourceFile}" path="${sourceFile}" raw-source="${encodeURIComponent(
-        source
-      )}" description="${encodeURIComponent(description)}" show="${show}"><${compName} />`
+      const compName = 'Ep' + camelize(mainFile)
+      return `<Demo demo-src="${files.join(',')}" path="${mainFile}" description="${encodeURIComponent(
+        description
+      )}" show="${show}"><${compName} />`
     }
   }
 }
 
 /**
- * 包裹 md.renderAsync：把容器输出的 demo-src="<path>" 占位替换为
- * <Demo source="<encodeURIComponent(高亮HTML)>">。
- *
- * 高亮复用 markdown-it 自身的 fence 管线（shiki + preWrapper），即把示例源码
- * 当作一次完整的 ```tsx 代码块渲染，得到与正文代码块一致的高亮样式。
+ * 包裹 md.renderAsync：把容器输出的 demo-src="<path[,path,...]>" 占位替换为
+ * <Demo source="<encodeURIComponent(JSON 数组)>">，数组每项为
+ * { path, lang, raw, html }，html 为按各自语言（tsx/css）用 markdown-it fence
+ * 管线（shiki + preWrapper）高亮后的代码块。
  */
 export function highlightDemoSource(md: any) {
   const origRenderAsync = md.renderAsync.bind(md)
@@ -75,18 +79,22 @@ export function highlightDemoSource(md: any) {
 
     let result = out
     for (const m of matches) {
-      const demoPath = m[1]
-      const absPath = path.resolve(examplesRoot, `${demoPath}.tsx`)
-      let source = ''
-      try {
-        source = fs.readFileSync(absPath, 'utf-8')
-      } catch {
-        continue
+      const files: { path: string; lang: string; raw: string; html: string }[] = []
+      for (const ref of m[1].split(',').map((s) => s.trim()).filter(Boolean)) {
+        const absPath = path.resolve(examplesRoot, resolveDemoFile(ref))
+        let source = ''
+        try {
+          source = fs.readFileSync(absPath, 'utf-8')
+        } catch {
+          continue
+        }
+        const lang = demoLang(ref)
+        const html = await origRenderAsync('```' + lang + '\n' + source.trimEnd() + '\n```', {})
+        files.push({ path: ref, lang, raw: source, html })
       }
-      const html = await origRenderAsync('```tsx\n' + source.trimEnd() + '\n```', {})
       result = result.replace(
-        `demo-src="${demoPath}"`,
-        `source="${encodeURIComponent(html)}"`
+        `demo-src="${m[1]}"`,
+        `source="${encodeURIComponent(JSON.stringify(files))}"`
       )
     }
     return result
