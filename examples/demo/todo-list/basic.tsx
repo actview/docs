@@ -7,7 +7,7 @@ interface TodoItem {
   done: boolean
 }
 
-export function Basic() {
+export default function Basic() {
   const todos = reactive<TodoItem[]>([
     { id: 1, text: '学习 ActView', done: true },
     { id: 2, text: '写一个示例', done: false }

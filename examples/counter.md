@@ -11,7 +11,7 @@ description: 计数器示例：ref 响应式状态与事件处理。
 下面的计数器就是**当前页面真实运行的 ActView 组件**，点击「查看源码」可以看到完整的组件代码，点击按钮试试：
 
 :::demo
-counter/basic,common.css
+counter,common.css
 :::
 
 ## 要点

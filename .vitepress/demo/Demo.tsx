@@ -20,6 +20,7 @@ export function Demo(props: any = {}) {
   const show = props.show !== 'false'
   const description = decodeURIComponent(props.description ?? '')
   const path = props.path ?? ''
+  const pathLabel = !path ? '' : path.includes('.') ? path : `${path}.tsx`
 
   const files: DemoFile[] = (() => {
     try {
@@ -75,7 +76,7 @@ export function Demo(props: any = {}) {
       {show && <div class="av-demo-divider" />}
       {show && (
         <div class="av-demo-ops">
-          <span class="av-demo-path">{path}</span>
+          <span class="av-demo-path">{pathLabel}</span>
           <span class="av-demo-actions">
             <button
               type="button"
@@ -111,7 +112,10 @@ export function Demo(props: any = {}) {
                 class={['av-demo-tab', active.value === i && 'active'].filter(Boolean).join(' ')}
                 onclick={() => setActive(i)}
               >
-                {file.path.split('/').pop()}.{file.lang}
+                {(() => {
+                  const name = file.path.split('/').pop() ?? ''
+                  return name.includes('.') ? name : `${name}.${file.lang}`
+                })()}
               </button>
             ))}
           </div>

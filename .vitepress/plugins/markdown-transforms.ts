@@ -1,7 +1,13 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { camelize, resolveDemoFile } from './demo-container'
+import {
+  buildDemoTabs,
+  camelize,
+  demoBaseName,
+  resolveDemoFile,
+  stripComments
+} from './demo-container'
 
 const docRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const examplesRoot = path.resolve(docRoot, 'examples/demo')
@@ -29,10 +35,10 @@ function scanDemoBlocks(code: string): DemoRef[] {
 }
 
 /**
- * 扫描 markdown 中的 :::demo 块：为每个 demo 的第一个文件（展示组件）注入
- * import 到页面 <script lang="tsx">；其余文件作为源码标签页展示。
+ * 扫描 markdown 中的 :::demo 块：为每个 demo 的第一个参数（展示组件，取其
+ * 默认导出）注入 import 到页面 <script lang="tsx">；其余文件作为源码标签页。
  *
- * 附加基于所有示例文件 mtime 的版本注释，示例源码变动时强制 press 的
+ * 附加基于所有标签页文件 mtime 的版本注释，示例源码变动时强制 press 的
  * markdown 缓存失效，dev 下 demo 源码与展示保持最新。
  */
 export function demoTransform() {
@@ -57,28 +63,37 @@ export function demoTransform() {
       const imports: string[] = []
       let version = 0
       for (const demo of demos) {
-        for (const ref of demo.files) {
-          const absPath = path.resolve(examplesRoot, resolveDemoFile(ref))
+        const tabs = buildDemoTabs(demo.files)
+        for (const ref of tabs) {
+          const absPath = path.resolve(examplesRoot, ref)
           let stat: fs.Stats
           try {
             stat = fs.statSync(absPath)
           } catch {
             throw new Error(
-              `[demo] 示例文件不存在: ${absPath}（请检查 :::demo 引用的路径）`
+              `[demo] 示例文件不存在: ${absPath}（文件需带后缀，或目录需包含 index.ts/tsx/js/jsx）`
             )
           }
           this.addWatchFile(absPath)
           version = (version * 31 + Math.round(stat.mtimeMs)) | 0
         }
 
-        const mainFile = demo.files[0]
-        if (seen.has(mainFile)) continue
-        seen.add(mainFile)
-        const exportName = camelize(path.basename(mainFile))
-        const compName = 'Ep' + camelize(mainFile)
-        imports.push(
-          `import { ${exportName} as ${compName} } from '/examples/demo/${mainFile}'`
+        const mainParam = demo.files[0]
+        if (seen.has(mainParam)) continue
+        seen.add(mainParam)
+
+        const mainRef = resolveDemoFile(mainParam)
+        const mainSource = stripComments(
+          fs.readFileSync(path.resolve(examplesRoot, mainRef), 'utf-8')
         )
+        if (!/export\s+(?:default\b|\{[^}]*?\bdefault\b[^}]*?\}\s*from)/.test(mainSource)) {
+          throw new Error(
+            `[demo] 示例组件必须使用 export default（${mainRef} 未找到默认导出）`
+          )
+        }
+
+        const compName = 'Ep' + camelize(demoBaseName(mainParam))
+        imports.push(`import ${compName} from '/examples/demo/${mainRef}'`)
       }
 
       const script = `<script lang="tsx">\nimport { Demo } from '@demo/Demo'\n${imports.join(

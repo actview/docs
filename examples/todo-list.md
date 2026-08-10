@@ -11,7 +11,7 @@ description: 待办清单示例：reactive 数组、keyed 列表渲染与增删�
 下面的待办清单就是**当前页面真实运行的 ActView 组件**，点击「查看源码」可以看到完整的组件代码：
 
 :::demo
-todo-list/basic
+todo-list/basic.tsx
 :::
 
 ## 要点

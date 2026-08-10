@@ -1,7 +1,7 @@
 import { ref } from 'actview'
-import '../common.css?scoped'
+import '../common.css'
 
-export function Basic() {
+export default function CounterDemo() {
   const count = ref(0)
 
   return (
