@@ -15,7 +15,11 @@
     "@actview/plugin-scoped": "^0.2.1",
     "@actview/press": "^1.0.15",
     "@actview/router": "^1.0.10",
-    "actview": "^1.0.24"
+    "@types/node": "^26.2.0",
+    "actview": "^1.0.24",
+    "markdown-it": "^14.3.0",
+    "markdown-it-container": "^4.0.0",
+    "typescript": "^7.0.2"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

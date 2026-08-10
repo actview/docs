@@ -1,4 +1,8 @@
 import { defineConfig, type DefaultTheme } from '@actview/press'
+import { fileURLToPath } from 'node:url'
+import mdContainer from 'markdown-it-container'
+import { createDemoContainer } from './plugins/demo-container'
+import { demoTransform } from './plugins/markdown-transforms'
 
 export default defineConfig({
   title: 'ActView',
@@ -14,6 +18,21 @@ export default defineConfig({
 
   lastUpdated: true,
   cleanUrls: true,
+
+  markdown: {
+    config(md) {
+      md.use(mdContainer, 'demo', createDemoContainer(md))
+    }
+  },
+
+  vite: {
+    resolve: {
+      alias: {
+        '@demo': fileURLToPath(new URL('./demo', import.meta.url))
+      }
+    },
+    plugins: [demoTransform()]
+  },
 
   themeConfig: {
     logo: '/actview-logo.svg',
