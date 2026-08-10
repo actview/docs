@@ -9,12 +9,13 @@
     "update:actview": "node scirpts/update-actview.js"
   },
   "devDependencies": {
-    "@actview/core": "^1.0.19",
+    "@actview/core": "^1.0.25",
     "@actview/jsx": "^1.0.11",
-    "@actview/plugin": "^1.0.7",
-    "@actview/press": "^1.0.10",
+    "@actview/plugin": "^1.0.12",
+    "@actview/plugin-scoped": "^0.2.1",
+    "@actview/press": "^1.0.15",
     "@actview/router": "^1.0.10",
-    "actview": "^1.0.18"
+    "actview": "^1.0.24"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

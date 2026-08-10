@@ -9,40 +9,61 @@ importers:
   .:
     devDependencies:
       '@actview/core':
-        specifier: ^1.0.19
-        version: 1.0.19
+        specifier: ^1.0.25
+        version: 1.0.25
       '@actview/jsx':
         specifier: ^1.0.11
         version: 1.0.11
       '@actview/plugin':
-        specifier: ^1.0.7
-        version: 1.0.7
+        specifier: ^1.0.12
+        version: 1.0.12
+      '@actview/plugin-scoped':
+        specifier: ^0.2.1
+        version: 0.2.1(vite@7.3.6)
       '@actview/press':
-        specifier: ^1.0.10
-        version: 1.0.10(postcss@8.5.25)
+        specifier: ^1.0.15
+        version: 1.0.15(postcss@8.5.25)
       '@actview/router':
         specifier: ^1.0.10
         version: 1.0.10
       actview:
-        specifier: ^1.0.18
-        version: 1.0.18
+        specifier: ^1.0.24
+        version: 1.0.24
 
 packages:
 
-  '@actview/core@1.0.12':
-    resolution: {integrity: sha512-kINSZYH2FQKtPY+k7JZwChNceztmzWrG9nJy/pNzETD+Rn4jtiRO6YVwS6sZTUEf35l+i1Nb6FAhRXeJvsAjGg==}
+  '@actview/babel-plugin-actview@0.1.0':
+    resolution: {integrity: sha512-oR8U8b3dHru43j5LkKWylywQ2P0ljegdXTRSd0bJfeVXRyJuIsR5x6RBhXCE+ABE918jNdBdDWZeRS+4CYnlBg==}
+
+  '@actview/babel-plugin-actview@0.1.2':
+    resolution: {integrity: sha512-w2eB6k7wz8SRbya4dDWuPUGz/Oh8Oau/1gePcJTbUJiST+nIphP+jJPwIzaseb8HJYKBWs5Rh1/UlhB/fGc2Vg==}
 
   '@actview/core@1.0.19':
     resolution: {integrity: sha512-Q972jYxzbKB3waP2MfOySQxdtITduwQsm4JpO5pAQy7a5RA7S+aMX+rD3kwPzTeCforfn7+m1iGYBBuS/Kaa0g==}
 
+  '@actview/core@1.0.25':
+    resolution: {integrity: sha512-wCz31ijSGalVcGT5yvl5L4R/MNcOxhdMQlhAnye+GgdY2IcvsbjXpX3xv1pnspkKh4aNfnRXZ1vs8qW9g8ljTg==}
+
   '@actview/jsx@1.0.11':
     resolution: {integrity: sha512-eMBEs3mQE9yIg1F9qE2nlmPAALRunQ1mlWLJp/rJW7iR1Y3RBNFCBdA7eHFqgQCMHRa5Fcld0NjbADfZPNsS4A==}
 
-  '@actview/plugin@1.0.7':
-    resolution: {integrity: sha512-T6P8Sog9KnB8EYzTZCVt3wopcKmVAgwHpYZvbdbykQM8sgJsQq/fHzUia7miL+I01U2dCY9tk0gLbk2/O+sFHg==}
+  '@actview/plugin-scoped@0.2.1':
+    resolution: {integrity: sha512-cWeJueXB6E4dXVUMqERMIzXJ1gDzvgkoDObqYQBTgobSs1aJ1Kg6LRnFRpspeoqNyFWN2pd3ahp19xf3nbh5Bg==}
+    peerDependencies:
+      vite: ^6.0.0 || ^7.0.0 || ^8.0.0
 
-  '@actview/press@1.0.10':
-    resolution: {integrity: sha512-2MqI83fTJhD+pXvo5VEvNBx8MhbGoQdAXNI2onZDeJ89OkYS6np580tz1f6CKY7hLTSFOsx5gqcp1IcgyFwMDg==}
+  '@actview/plugin-vite@1.0.11':
+    resolution: {integrity: sha512-Au2BFk2GPDqNGiraXbFbti6rPbKDOXwWYMnVrxkXlbMwunk8A1qcn2P+QBwJ09W3lxRcPfDnoNaPMhQVzlvPXw==}
+
+  '@actview/plugin-vite@1.0.13':
+    resolution: {integrity: sha512-gTs03se8cDpMMJ2+/yw6Jr3qA2WrlKPnMfKGfAoW7FKkPLe3Q49QNyGQF8pM1ONAXQmTb+TQMDhVyuICo8FlYg==}
+
+  '@actview/plugin@1.0.12':
+    resolution: {integrity: sha512-a+H5xmbyEV7y67NnUfOWZ+vxJXRLh7VFiePfWoGScpoOWKhCeVaGbnhwhFO5deJtGEbRx6ok+aJRaF7CGghDnA==}
+    deprecated: 请改用 @actview/plugin-vite（Vite 插件）与 @actview/babel-plugin-actview（Babel 插件）；本包仅保留兼容 re-export
+
+  '@actview/press@1.0.15':
+    resolution: {integrity: sha512-rn40HUihVh9vlhhmsk9eRnbh97RsN7avRGt1jVjJodKK5uEXoBX0PCgegX89Tw8IsCITy2s00+GFfN8XOW4BfA==}
     hasBin: true
     peerDependencies:
       markdown-it-mathjax3: ^4
@@ -510,8 +531,8 @@ packages:
   '@ungap/structured-clone@1.3.3':
     resolution: {integrity: sha512-60YRaenCQcVjYEKOcG824+DRGGIQ3VKErcBoAEDJZz5bKIs2ZG+X/H9Nk+Q6EVkwJk5QNApxbrc5QtBSwtrXAg==}
 
-  actview@1.0.18:
-    resolution: {integrity: sha512-YV52Ci9oOJvd/TNOfdLTybIgI1wIEOWFV5kgSdkvoFn10Qv+OpUarLopgPWJuL+kSYe/vQKwK37GjlVZiNZ17w==}
+  actview@1.0.24:
+    resolution: {integrity: sha512-fmWr+Ey4RO/zUnCdVDxteFqAVNQAaFEtL7SgWYV40YOpmzEgfSfBDTV+MX/AYQFlssp+7ysOPwTm4+CuWzZcmA==}
 
   baseline-browser-mapping@2.11.12:
     resolution: {integrity: sha512-r7WnVImvVCeFpf2DOXfy41aPWzeNg3H/A2X4dKmy1QL0MSyyk/e7z8ihJ3N6Nn2PsdhkVlqnEfnUE4a05P2aTA==}
@@ -540,6 +561,11 @@ packages:
 
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
+
+  cssesc@3.0.0:
+    resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
+    engines: {node: '>=4'}
+    hasBin: true
 
   dequal@2.0.3:
     resolution: {integrity: sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA==}
@@ -661,6 +687,10 @@ packages:
     resolution: {integrity: sha512-RvwwcruNjI1ncT5xRakeyS9Lf8lcItv34KD+aif+VH9kduAyfYBipGh12274xtenIPZ119/R9BdTBa8gAwSh0A==}
     engines: {node: '>=12'}
 
+  postcss-selector-parser@7.1.5:
+    resolution: {integrity: sha512-KvvtD7SrlBP7dlgkBghEE3r84CABm5SmV2aNcG4oCA+qDnJ/tvKonFVvwWAyyWUEwxuNawdfEAZKP9zM3oZ2Uw==}
+    engines: {node: '>=4'}
+
   postcss@8.5.25:
     resolution: {integrity: sha512-DTPx3RWSSnWyzLxQnlH0rJP+EW5ekl16ZU4/psbIhA0e53kJfdgaN5vKM+xP7yJtXVu+nfdVFmlgFDEKAe4Pyw==}
     engines: {node: ^10 || ^12 || >=14}
@@ -732,6 +762,9 @@ packages:
     peerDependencies:
       browserslist: '>= 4.21.0'
 
+  util-deprecate@1.0.2:
+    resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
+
   vfile-message@4.0.3:
     resolution: {integrity: sha512-QTHzsGd1EhbZs4AsQ20JX1rC3cOlt/IWJruk893DfLRr57lcnOeMaWG4K0JrRta4mIJZKth2Au3mM3u03/JWKw==}
 
@@ -783,26 +816,54 @@ packages:
 
 snapshots:
 
-  '@actview/core@1.0.12':
+  '@actview/babel-plugin-actview@0.1.0':
     dependencies:
-      '@actview/jsx': 1.0.11
+      '@babel/core': 8.0.1
+
+  '@actview/babel-plugin-actview@0.1.2':
+    dependencies:
+      '@babel/core': 8.0.1
 
   '@actview/core@1.0.19':
     dependencies:
       '@actview/jsx': 1.0.11
 
+  '@actview/core@1.0.25':
+    dependencies:
+      '@actview/jsx': 1.0.11
+
   '@actview/jsx@1.0.11': {}
 
-  '@actview/plugin@1.0.7':
+  '@actview/plugin-scoped@0.2.1(vite@7.3.6)':
     dependencies:
       '@babel/core': 8.0.1
+      postcss: 8.5.25
+      postcss-selector-parser: 7.1.5
+      vite: 7.3.6
 
-  '@actview/press@1.0.10(postcss@8.5.25)':
+  '@actview/plugin-vite@1.0.11':
     dependencies:
-      '@actview/core': 1.0.19
+      '@actview/babel-plugin-actview': 0.1.0
+      '@babel/core': 8.0.1
+
+  '@actview/plugin-vite@1.0.13':
+    dependencies:
+      '@actview/babel-plugin-actview': 0.1.2
+      '@babel/core': 8.0.1
+
+  '@actview/plugin@1.0.12':
+    dependencies:
+      '@actview/babel-plugin-actview': 0.1.0
+      '@actview/plugin-vite': 1.0.11
+
+  '@actview/press@1.0.15(postcss@8.5.25)':
+    dependencies:
+      '@actview/core': 1.0.25
       '@actview/jsx': 1.0.11
-      '@actview/plugin': 1.0.7
+      '@actview/plugin-scoped': 0.2.1(vite@7.3.6)
+      '@actview/plugin-vite': 1.0.13
       '@actview/router': 1.0.10
+      '@babel/core': 8.0.1
       '@docsearch/css': 4.7.0
       '@docsearch/js': 4.7.0
       '@docsearch/sidepanel-js': 4.7.0
@@ -811,7 +872,7 @@ snapshots:
       '@shikijs/transformers': 4.4.2
       '@shikijs/types': 4.4.2
       '@types/markdown-it': 14.1.2
-      actview: 1.0.18
+      actview: 1.0.24
       focus-trap: 8.2.2
       minisearch: 7.2.0
       shiki: 4.4.2
@@ -833,7 +894,7 @@ snapshots:
 
   '@actview/router@1.0.10':
     dependencies:
-      '@actview/core': 1.0.12
+      '@actview/core': 1.0.19
       '@actview/jsx': 1.0.11
 
   '@babel/code-frame@8.0.0':
@@ -1171,9 +1232,9 @@ snapshots:
 
   '@ungap/structured-clone@1.3.3': {}
 
-  actview@1.0.18:
+  actview@1.0.24:
     dependencies:
-      '@actview/core': 1.0.19
+      '@actview/core': 1.0.25
       '@actview/jsx': 1.0.11
 
   baseline-browser-mapping@2.11.12: {}
@@ -1197,6 +1258,8 @@ snapshots:
   comma-separated-tokens@2.0.3: {}
 
   convert-source-map@2.0.0: {}
+
+  cssesc@3.0.0: {}
 
   dequal@2.0.3: {}
 
@@ -1331,6 +1394,11 @@ snapshots:
 
   picomatch@4.0.5: {}
 
+  postcss-selector-parser@7.1.5:
+    dependencies:
+      cssesc: 3.0.0
+      util-deprecate: 1.0.2
+
   postcss@8.5.25:
     dependencies:
       nanoid: 3.3.17
@@ -1440,6 +1508,8 @@ snapshots:
       browserslist: 4.28.7
       escalade: 3.2.0
       picocolors: 1.1.1
+
+  util-deprecate@1.0.2: {}
 
   vfile-message@4.0.3:
     dependencies:
