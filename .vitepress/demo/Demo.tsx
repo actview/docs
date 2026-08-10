@@ -1,15 +1,23 @@
-import { ref } from 'actview'
+import { onMounted, ref } from 'actview'
 import './demo.css'
 
 export function Demo(props: any = {}) {
   const expanded = ref(false)
   const copied = ref(false)
+  const sourceBox = ref<HTMLElement | undefined>(undefined)
   let timer: ReturnType<typeof setTimeout> | undefined
 
   const show = props.show !== 'false'
-  const source = decodeURIComponent(props['raw-source'] ?? '')
+  const sourceHtml = decodeURIComponent(props.source ?? '')
+  const sourceText = decodeURIComponent(props['raw-source'] ?? '')
   const description = decodeURIComponent(props.description ?? '')
   const path = props.path ?? ''
+
+  onMounted(() => {
+    if (sourceBox.value && sourceHtml) {
+      sourceBox.value.innerHTML = sourceHtml
+    }
+  })
 
   const toggleSource = () => {
     expanded.value = !expanded.value
@@ -17,7 +25,7 @@ export function Demo(props: any = {}) {
 
   const copyCode = async () => {
     try {
-      await navigator.clipboard.writeText(source)
+      await navigator.clipboard.writeText(sourceText)
       copied.value = true
       clearTimeout(timer)
       timer = setTimeout(() => {
@@ -57,11 +65,7 @@ export function Demo(props: any = {}) {
           </span>
         </div>
       )}
-      <div class={['av-demo-source', expanded.value && 'open'].filter(Boolean).join(' ')}>
-        <pre>
-          <code>{source}</code>
-        </pre>
-      </div>
+      <div ref={sourceBox} class={['av-demo-source', expanded.value && 'open'].filter(Boolean).join(' ')}></div>
     </div>
   )
 }

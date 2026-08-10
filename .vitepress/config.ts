@@ -1,7 +1,7 @@
 import { defineConfig, type DefaultTheme } from '@actview/press'
 import { fileURLToPath } from 'node:url'
 import mdContainer from 'markdown-it-container'
-import { createDemoContainer } from './plugins/demo-container'
+import { createDemoContainer, highlightDemoSource } from './plugins/demo-container'
 import { demoTransform } from './plugins/markdown-transforms'
 
 export default defineConfig({
@@ -21,7 +21,8 @@ export default defineConfig({
 
   markdown: {
     config(md) {
-      md.use(mdContainer, 'demo', createDemoContainer(md))
+      md.use(mdContainer, 'demo', createDemoContainer())
+      highlightDemoSource(md)
     }
   },
 

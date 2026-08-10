@@ -101,14 +101,13 @@
   max-height: 1000px;
 }
 
-.av-demo-block .av-demo-source pre {
+.av-demo-block .av-demo-source div[class*='language-'],
+.av-demo-block .av-demo-source .vp-code-group {
   margin: 0;
-  padding: 16px;
   border-radius: 0;
-  background: transparent;
 }
 
-.av-demo-block .av-demo-source code {
-  font-size: 13px;
-  color: var(--vp-code-block-color);
+.av-demo-block .av-demo-source pre {
+  margin: 0;
+  border-radius: 0;
 }
