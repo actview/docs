@@ -5,6 +5,7 @@ export function Demo(props: any = {}) {
   const expanded = ref(false)
   const copied = ref(false)
   const sourceBox = ref<HTMLElement | undefined>(undefined)
+  const sourceMax = ref(0)
   let timer: ReturnType<typeof setTimeout> | undefined
 
   const show = props.show !== 'false'
@@ -21,6 +22,7 @@ export function Demo(props: any = {}) {
 
   const toggleSource = () => {
     expanded.value = !expanded.value
+    sourceMax.value = expanded.value && sourceBox.value ? sourceBox.value.scrollHeight : 0
   }
 
   const copyCode = async () => {
@@ -65,7 +67,11 @@ export function Demo(props: any = {}) {
           </span>
         </div>
       )}
-      <div ref={sourceBox} class={['av-demo-source', expanded.value && 'open'].filter(Boolean).join(' ')}></div>
+      <div
+        ref={sourceBox}
+        class="av-demo-source"
+        style={{ maxHeight: sourceMax.value + 'px' }}
+      ></div>
     </div>
   )
 }

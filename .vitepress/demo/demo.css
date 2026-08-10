@@ -91,14 +91,9 @@
 }
 
 .av-demo-block .av-demo-source {
-  max-height: 0;
   overflow: hidden;
   transition: max-height 0.35s ease-in-out;
   background: var(--vp-code-block-bg);
-}
-
-.av-demo-block .av-demo-source.open {
-  max-height: 1000px;
 }
 
 .av-demo-block .av-demo-source div[class*='language-'],
