@@ -87,9 +87,9 @@ createApp(App).mount('#app')
 
 大多数应用代码用 JSX 即可，无需直接调用这些 API。
 
-## 属性透传的真相
+## props 的真相
 
-`mergeAttrsToRoot` 在组件每次 render 后执行：把外部传入的白名单属性（`class` / `className` / `style` / `id` + `on*` 事件）合并到单根元素。这意味着组件根元素的 props 是「render 产物 + 外部合并」的结果——调试时如果发现根元素多了属性，先检查外部调用方。
+组件收到的 props **全量进入 `setup`**（`key`/`ref` 除外），框架**不自动透传**。根元素上的属性完全由组件自己的 render 决定——要把外部的 `class`/`style` 等落到根元素，组件需显式 `{...props}` 展开。
 
 ## nextTick
 
