@@ -48,18 +48,31 @@ export const Counter = defineComponent(() => {
 钩子只能在 setup 中调用（模块级 `currentInstance` 上下文定位组件）。
 
 ```ts
+function onBeforeMount(fn: () => void): void
 function onMounted(fn: () => void): void
 function onUpdated(fn: () => void): void
 function onBeforeUnmount(fn: () => void): void
 function onUnmounted(fn: () => void): void
+function onActivated(fn: () => void): void
+function onDeactivated(fn: () => void): void
+function onErrorCaptured(fn: (err: any) => boolean | void): void
+function onServerPrefetch(fn: () => Promise<any> | any): void
+function onRenderTracked(fn: (e: any) => void): void
+function onRenderTriggered(fn: (e: any) => void): void
 ```
 
 | 钩子 | 时机 |
 | --- | --- |
+| `onBeforeMount` | 首次渲染前 |
 | `onMounted` | 首次渲染并挂载到 DOM 后（子组件先于父组件触发） |
 | `onUpdated` | 每次响应式重渲染后 |
 | `onBeforeUnmount` | 即将卸载、DOM 移除前 |
 | `onUnmounted` | 卸载完成、effect 停止后 |
+| `onActivated` | KeepAlive 缓存组件被激活（从缓存恢复） |
+| `onDeactivated` | KeepAlive 缓存组件被移入缓存 |
+| `onErrorCaptured` | 捕获子组件渲染错误（返回 `false` 停止向上传播） |
+| `onServerPrefetch` | renderToString 阶段（SSR 数据预取） |
+| `onRenderTracked` / `onRenderTriggered` | 调试：依赖收集 / 依赖触发 |
 
 ```tsx
 import { ref, onMounted, onUnmounted } from 'actview'

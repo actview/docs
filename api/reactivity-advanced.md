@@ -48,6 +48,35 @@ import { getCurrentScope } from 'actview'
 const scope = getCurrentScope()
 ```
 
+## effectScope()
+
+创建一个作用域，用 `scope.run(fn)` 在作用域激活状态下执行 fn（期间创建的 effect 注册进该 scope）。
+
+```ts
+function effectScope(detached?: boolean): EffectScope
+```
+
+```tsx
+import { effectScope, onScopeDispose, watch } from 'actview'
+
+const scope = effectScope()
+
+scope.run(() => {
+  watch(() => state.count, (n) => console.log(n))
+  onScopeDispose(() => console.log('scope 已清理'))
+})
+
+scope.stop() // 停止 effect + 执行 onScopeDispose 回调
+```
+
+## onScopeDispose()
+
+在当前作用域注册清理函数，作用域 `stop()` 时执行。
+
+```ts
+function onScopeDispose(fn: () => void): void
+```
+
 ## runEffect()
 
 创建 effect 并**立即同步执行一次**；可选 `scheduler` 控制后续触发方式（默认同步重跑）。

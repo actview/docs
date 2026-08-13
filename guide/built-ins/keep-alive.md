@@ -50,6 +50,36 @@ export function Tab() {
 3. 切换回来：命中缓存 → 更新 props → DOM 移回挂载容器 → 复用原实例更新；
 4. `KeepAlive` 自身卸载时：清空缓存并真正卸载所有缓存实例。
 
+## include / exclude / max
+
+按组件名过滤缓存、限制缓存上限：
+
+```tsx
+<KeepAlive include="CompA,CompB" exclude={/Temp/} max={10}>
+  {tab.value === 'a' ? <CompA key="a" /> : <CompB key="b" />}
+</KeepAlive>
+```
+
+- `include`：仅缓存匹配（组件名）的组件
+- `exclude`：排除匹配的组件
+- `max`：最大缓存数，超出 LRU 淘汰最旧
+
+> 组件名来自 `defineComponent(fn, name)` 第二参数，或 Babel 从函数名/变量名自动传递。
+
+## activated / deactivated 钩子
+
+缓存组件激活（恢复）与失活（移入缓存）时触发：
+
+```tsx
+import { onActivated, onDeactivated } from 'actview'
+
+export function CompA() {
+  onActivated(() => console.log('从缓存恢复'))
+  onDeactivated(() => console.log('移入缓存'))
+  return <div>A</div>
+}
+```
+
 ## 注意事项
 
 - 子组件必须是**单根元素**（`Fragment` 多根不支持）；

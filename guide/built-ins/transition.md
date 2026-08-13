@@ -58,11 +58,55 @@ export function Fade() {
 
 未指定时读取元素生效的 CSS `transition-duration`；两者都为 0（无过渡样式）时动画立即完成。
 
+## mode="out-in"
+
+切换时旧节点先播放离开动画，**完成后**新节点再进入（避免二者同时存在）：
+
+```tsx
+<Transition name="fade" mode="out-in">
+  {show.value ? <A /> : <B />}
+</Transition>
+```
+
+## appear
+
+默认首次挂载**不**播放进入动画，`appear` 显式开启：
+
+```tsx
+<Transition name="fade" appear>
+  <p>首次挂载也淡入</p>
+</Transition>
+```
+
+## JS 钩子
+
+用 JS 钩子替代 CSS 类动画（有 `onEnter`/`onLeave` 时优先）：
+
+```tsx
+<Transition
+  appear
+  onEnter={(el, done) => {
+    el.animate([{ opacity: 0 }, { opacity: 1 }], 300).onfinish = done
+  }}
+  onAfterEnter={() => console.log('进入完成')}
+>
+  <div>内容</div>
+</Transition>
+```
+
+## TransitionGroup
+
+列表增删过渡：列表项移除时播放离开动画后延迟移除：
+
+```tsx
+<TransitionGroup name="list">
+  {items.value.map((it) => <div key={it.id}>{it.name}</div>)}
+</TransitionGroup>
+```
+
 ## 限制
 
-- **仅支持单个子节点**：传入多个节点时会警告并取第一个；
-- **无 `mode`**（`out-in` / `in-out`）：旧节点与节点切换时，新节点直接挂载、旧节点播放离开动画后延迟移除，二者可能同时存在；
-- 无 `TransitionGroup` 列表过渡。
+- **仅支持单个子节点**（`Transition`）：传入多个节点时警告并取第一个；多节点列表用 `TransitionGroup`。
 
 ## 下一步
 

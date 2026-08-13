@@ -19,8 +19,10 @@ ActView 使用 TypeScript 编写，类型支持开箱即用：JSX 有完整的�
 }
 ```
 
-- 原生元素：`div` / `span` / `input` 等标签的属性有完整提示（`class`、`style`、`onclick`、`value`……）；
-- `input` 使用 `InputProps`（`type` 收窄为具体联合类型，`value` / `checked` 等有类型）；
+- 原生元素：**全量 HTML 标签**（约 110 个）属性有完整提示（`class`、`style`、`onclick`、`value`……）；
+- **SVG 元素**（`svg`/`path`/`circle`/`g` 等约 50 个）有专属属性类型（`viewBox`/`fill`/`cx`/`d`……）；
+- **ARIA 属性**：所有 `aria-*` 自动允许（模板索引签名）；
+- **自定义属性**：用 `data-*`（如 `data-testid`）；任意属性会类型报错；
 - 事件处理器参数是原生事件类型（`MouseEvent` / `KeyboardEvent` / `FormEvent`），无需手动标注。
 
 ## 组件 props 类型
@@ -66,8 +68,19 @@ export const Greeting = defineComponent((props: { name: string }) => {
 | `ComponentType<P>` | 组件类型（`{ __setup }` + call signature） |
 | `PropsOf<T>` | 从组件类型推导 props（取 `__setup` 第一参数） |
 | `FormEvent` | 表单事件（`target` 带 `value` / `checked`） |
-| `HtmlProps` | 通用 HTML 元素属性（含全部事件） |
-| `InputProps` | input 元素属性（`type` 联合 + 校验属性） |
+| `HTMLAttributes` | 通用 HTML 元素属性（含 ARIA / 全部事件 / `data-*`） |
+| `SVGAttributes` | SVG 元素属性（`viewBox` / `fill` / `stroke` / `d`……） |
+| `DOMAttributes` | 全部 DOM 事件处理器 |
+| `AnchorHTMLAttributes` / `InputHTMLAttributes` / … | 各元素专属属性 |
+
+### 组件 props 严格化
+
+组件 props 检查是 `P & HTMLAttributes`：声明类型必填，额外仅允许 HTML 属性（`class`/`style`/`on*`/`data-*`/`aria-*`），任意自定义 prop 报错：
+
+```tsx
+<Greeting name="x" class="btn" onClick={...} />  // ✅
+<Greeting name="x" foo="bar" />                   // ❌ foo 未声明，且不是 HTML 属性
+```
 
 ### PropsOf 示例
 
