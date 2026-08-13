@@ -4,14 +4,67 @@ description: 认识 ActView —— 一个轻量级、响应式驱动的 JSX 前�
 
 # 什么是 ActView？ {#what-is-actview}
 
-ActView 是一个**轻量级、响应式驱动的 JSX 前端框架**。它把 Vue 风格的响应式系统（`ref` / `reactive` / `computed` / `watch`）与 React 风格的 JSX 组件模型结合起来：
+ActView 是一个**轻量级、响应式驱动的 JSX 前端框架**。
 
-- 没有模板编译器、没有 `{{ }}` 插值、没有 `v-*` 指令；
-- 组件就是返回 JSX 的函数，配合 `defineComponent` 获得 **setup + render** 的二分结构；
-- 数据变化时，组件内部由响应式 effect 自动驱动「重新渲染 + 虚拟 DOM diff」，无需任何手动订阅。
+它的名字由两个生态交汇而来：
 
-> 一句话概括核心设计：**组件 = 响应式 effect 包裹的一个 `render()` 函数**。
-> `render()` 负责把响应式数据读出来生成 VNode，effect 负责在数据变化时自动重跑 `render + patch`。响应式系统管「何时重跑」，diff 管「怎么最小化更新 DOM」。
+- **Act** —— 取自 **React** 的后三个字母。ActView 继承了 React 的 JSX 写法：灵活自由，不需要记忆 `v-if`、`v-for`、`v-model` 等大量模板指令，条件、循环、事件绑定都可以直接用**原生 JavaScript 表达式**完成；
+- **View** —— 与 **Vue** 的发音相近。ActView 继承了 Vue 的响应式系统：`ref` / `reactive` / `computed` / `watch` 等，数据变化自动驱动视图更新；相比 React 的 `useEffect` 等 API，更容易理解，简单、直观。
+
+
+下面是一个最基本的示例：
+
+```tsx
+import { ref, createApp } from 'actview'
+function App() {
+  const count = ref(0)
+  return (
+    <button onclick={() => count.value++}>
+      {count.value}
+    </button>
+  )
+}
+createApp(App).mount("#app")
+
+```
+
+结果展示：
+
+<script lang="tsx">
+import { ref } from 'actview'
+function Counter() {
+  const count = ref(0)
+  return (
+    <button class="counter-btn" onclick={() => count.value++}>
+      {count.value}
+    </button>
+  )
+}
+</script>
+
+<Counter />
+
+<style>
+.counter-btn {
+  padding: 8px 20px;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  background: #42b883;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(66, 184, 131, 0.4);
+  min-width: 65px;
+}
+.counter-btn:hover {
+  background: #33a06f;
+}
+</style>
+
+上面的示例展示了 ActView 的两个核心功能：
+
+- **JSX 声明式渲染**：ActView 使用 JSX 来描述 UI 与状态之间的关系——没有模板语法、没有 `{{ }}` 插值，条件、循环、事件绑定都是**原生 JavaScript 表达式**，灵活且类型安全；
+- **响应性**：ActView 的 `ref` / `reactive` / `computed` / `watch` 等 API 会自动跟踪 JavaScript 状态，并在其发生变化时响应式地更新 DOM。
 
 ## 核心特性
 
@@ -24,27 +77,47 @@ ActView 是一个**轻量级、响应式驱动的 JSX 前端框架**。它把 Vu
 - `watch` / `watchEffect`（微任务批量触发，返回停止函数）
 - `EffectScope` 作用域管理，组件卸载时自动清理所有 effect
 
-### 🧩 纯 JSX 组件模型
+### 🧩 JSX 组件模型
 
-组件用普通函数书写，`actview` 的编译插件（基于 Babel）会在构建时把函数组件改写为 `defineComponent` 产物：
+ActView 使用 JSX 作为组件 UI 描述方式，无需额外学习模板语法或大量指令（如 v-if、v-for、v-model 等）。条件判断、列表渲染、事件绑定均基于原生 JavaScript 表达式完成，在保持灵活组合能力的同时，获得完整的 TypeScript 类型支持。
+
+不同于传统直接返回 JSX 的函数组件，ActView 在构建阶段通过 Babel 插件 @actview/plugin 对组件进行编译转换，将组件逻辑自动拆分为 setup 与 render 两个阶段：
+
+setup 阶段：负责初始化组件状态、创建响应式数据，仅在组件挂载时执行一次；
+render 阶段：负责根据当前状态生成 UI 描述，在组件首次渲染及响应式依赖变化时重新执行。
+
+基于这种编译时组件拆分机制，ActView 实现了组件级响应式更新模型：当组件内部状态发生变化时，仅触发当前组件的 render 执行，并通过 Virtual DOM diff 更新对应 DOM 节点，而无需重新执行父组件或整棵组件树的渲染流程，从而实现更精细、高效的更新粒度。
 
 ```tsx
-// 你写的源码
+// 你写的源码（普通 JSX 函数组件）
 function App() {
-  return <div>hello</div>
+  const count = ref(0)
+  return (
+    <button onclick={() => count.value++}>
+      {count.value}
+    </button>
+  )
 }
 
-// 构建后的产物（示意）
+// 构建后的产物（示意）：函数体被拆成 setup + render 两部分
 const App = defineComponent(function () {
-  return () => <div>hello</div>
+  const count = ref(0) // setup：组件挂载时只执行一次
+
+  return () => (       // render：挂载时与依赖更新时都会执行，生成 UI 描述
+    <button onclick={() => count.value++}>
+      {count.value}
+    </button>
+  )
 })
 ```
 
-`setup` 在整个生命周期中**只执行一次**并返回 render 函数；render 每次渲染读取响应式数据、产出 VNode，与旧 VNode 树做 diff（支持 `key` 的最小移动复用）。
+转换后，组件被拆成两个阶段：
 
-### 🪶 轻量小巧
+- **setup**：整个生命周期中**只执行一次**——创建响应式状态、注册生命周期钩子、创建侦听器；
+- **render**：**挂载时和每次依赖更新时都会执行**——读取数据、产出 VNode，与旧树做 diff。
 
-运行时（`@actview/core`）+ JSX 层（`@actview/jsx`）+ 路由（`@actview/router`）分层清晰，源码易读，非常适合学习「响应式系统 + 虚拟 DOM + 组件化」三者如何协作，也适合作为轻量单页应用的运行时。
+这正是 ActView 与普通 JSX 写法的核心区别：你写的还是同一个函数，但**构建期的代码转换**赋予了它「setup 只跑一次、挂载与依赖更新只重跑渲染函数」的组件语义。
+
 
 ### 🛡️ 内置组件
 
@@ -81,16 +154,6 @@ ActView 刻意**没有**以下 Vue 特性，遇到时请改用 JSX 等价写法�
 | `provide` / `inject` | 暂无内置实现，可用模块级共享状态 |
 | 自定义指令 | 无（不需要，直接用 JSX 属性） |
 
-## 包结构
-
-| 包 | 说明 |
-| --- | --- |
-| `actview` | 框架统一入口，聚合转发 `@actview/core` 的全部 API |
-| `@actview/core` | 运行时：响应式系统、组件模型、渲染器、内置组件、SSR |
-| `@actview/jsx` | JSX 运行时与全局类型（`jsx` / `jsxs` / `createElement` / `Fragment`） |
-| `@actview/router` | 响应式路由 |
-| `@actview/plugin` | 编译期插件（`actviewPlugin` vite 插件 / `defineComponentPlugin` Babel 插件） |
-| `@actview/create-cli` | 脚手架工具：一条命令创建 TypeScript + Vite + ActView 项目 |
 
 ## 现在开始
 

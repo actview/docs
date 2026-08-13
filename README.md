@@ -1,6 +1,6 @@
 # ActView 官方文档
 
-[ActView](https://github.com/ALiuYiLin/JSX-Demo) 框架的官方文档站点，参考 [vue3 docs](https://vuejs.org) 的结构与风格编写，使用 **ActPress**（`@actview/press`）构建。
+[ActView](https://github.com/ALiuYiLin/actview) 框架的官方文档站点，参考 [vue3 docs](https://vuejs.org) 的结构与风格编写，使用 **ActPress**（`@actview/press`）构建。
 
 ## 技术栈
 
@@ -95,7 +95,7 @@ plan.md                      实施计划（不作为站点页面）
 
 ## 内容来源
 
-所有 API 名称、签名与行为均以 [JSX-Demo](https://github.com/ALiuYiLin/JSX-Demo)（ActView 框架源码）为准。修改文档时请与 `packages/*` 源码核对。
+所有 API 名称、签名与行为均以 [actview](https://github.com/ALiuYiLin/actview)（ActView 框架源码）为准。修改文档时请与 `packages/*` 源码核对。
 
 ## 链接检查
 

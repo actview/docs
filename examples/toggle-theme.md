@@ -13,9 +13,9 @@ description: 主题切换示例：类样式绑定与 Transition 过渡。
 <script lang="tsx">
 import { ref, Transition } from 'actview'
 
-const dark = ref(false)
-
 export function ThemeDemo() {
+  const dark = ref(false)
+
   return (
     <div
       class={dark.value ? 'av-theme av-theme-dark' : 'av-theme av-theme-light'}

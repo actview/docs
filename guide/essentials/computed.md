@@ -6,7 +6,7 @@ description: computed 计算属性：惰性求值、结果缓存、自动追踪�
 
 ## 基本用法
 
-`computed()` 接收一个 getter 函数，返回一个只读的 `ComputedRef`。它与普通函数调用的区别在于两点：**惰性求值**与**结果缓存**。
+`computed()` 接收一个 getter 函数，返回 `ComputedRef`（默认只读）。它与普通函数调用的区别在于两点：**惰性求值**与**结果缓存**。
 
 ```tsx
 import { ref, computed } from 'actview'
@@ -42,6 +42,49 @@ console.log(quadruple.value) // 4
 base.value = 5
 console.log(quadruple.value) // 20
 ```
+
+## 可写计算属性
+
+`computed` 还支持 `{ get, set }` 选项形式，返回**可写**的 `WritableComputedRef`：读取走 `get`，赋值走 `set`（通常在 `set` 中把新值写回底层状态）。
+
+```tsx
+import { ref, computed } from 'actview'
+
+const firstName = ref('张')
+const lastName = ref('三')
+
+const fullName = computed({
+  get: () => `${firstName.value} ${lastName.value}`,
+  set: (value) => {
+    // 拆分后写回底层 ref，get 会自动重新计算
+    const [first, last] = value.split(' ')
+    firstName.value = first
+    lastName.value = last
+  }
+})
+
+console.log(fullName.value) // '张 三'
+fullName.value = '李 四'
+console.log(firstName.value, lastName.value) // '李' '四'
+```
+
+经典用例：**双向换算**——摄氏与华氏互转：
+
+```tsx
+const celsius = ref(20)
+const fahrenheit = computed({
+  get: () => Math.round((celsius.value * 9) / 5 + 32),
+  set: (v) => {
+    celsius.value = Number.isNaN(v) ? 0 : ((v - 32) * 5) / 9
+  }
+})
+```
+
+::: tip 说明
+- 未提供 `set` 时退化为只读，赋值会 `console.warn` 并忽略；
+- 可写 computed 的 `get` 同样惰性求值 + 缓存，写回状态后 `get` 自动重算；
+- `set` 中修改的响应式数据会正常触发视图更新。
+:::
 
 ## 在组件中使用
 

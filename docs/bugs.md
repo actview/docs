@@ -6,7 +6,7 @@
 
 ## Bug #1：卸载/重装 `@actview/press` 后，首次 `pnpm dev` 在线体验组件点击无效
 
-- **状态**：已定位（未修复）
+- **状态**：✅ 已解决（`@actview/core@1.0.19` / `actview@1.0.18`，2026-08 发布；修复验证见文末）
 - **涉及**：ActPress（`@actview/press`）dev 模式 + vite 依赖预构建
 - **发现版本**：`@actview/press` npm 1.0.4 / 1.0.5（`^1.0.1` 范围实际解析版本）
 
@@ -161,6 +161,217 @@
 - ✅ 产物中 `framework.*.js` **不再 import `theme.*.js`**（循环依赖已打破，仅 theme 单向依赖 framework）；
 - ✅ `framework` 顶层**不再调用 `readonly(siteData)`**（原崩溃点 `ref(readonly(siteData))` 已移除/延迟）；
 - ✅ `pnpm preview` 冒烟正常：首页 / 示例页均 HTTP 200，返回完整 SSR HTML。
+
+---
+
+## Bug #3：点击主题切换按钮报 `Cannot set property value of #<ComputedRefImpl> which has only a getter`
+
+- **状态**：✅ 已解决（`@actview/press` **1.0.8**，2026-08 发布；修复验证见文末）
+- **涉及**：ActPress（`@actview/press`）主题外观切换逻辑（`dist/client/app/data.js` 的 `useDark` + `dist/client/theme-default/components/VPSwitchAppearance.js`）
+- **发现版本**：`@actview/press` npm **1.0.7**（dev 与 build 产物均复现）
+
+### 问题出现场景
+
+1. `pnpm dev`（或 `pnpm build` + `pnpm preview`）启动文档站；
+2. 点击导航栏右上角的**外观切换按钮**（深色/浅色主题切换，`VPSwitchAppearance`）；
+3. 控制台报错：
+   ```
+   VPSwitchAppearance.js?v=c6734524:9 Uncaught TypeError: Cannot set property value of #<ComputedRefImpl> which has only a getter
+       at vei.<computed>.toggleAppearance [as value] (VPSwitchAppearance.js?v=c6734524:9:18)
+       at vei.<computed> (index.js:1235:15)
+   ```
+   主题不切换，按钮交互失效。
+
+### 现象要点
+
+- 仅点击外观切换按钮时报错；其余主题/导航功能正常；
+- dev 与生产构建均复现（纯运行时逻辑问题，与构建方式无关）；
+- 1.0.7 修复 Bug #2（页面能打开）后此问题随即暴露。
+
+### 根因（含证据）
+
+核心：**ActPress 从 Vue/VitePress 移植主题切换逻辑时，`useDark()` 的 `isDark` 被实现为「只有 getter 的只读 `computed`」（ActView 的 `computed` 不支持 setter），但 `toggleAppearance` 仍沿用 Vue 版「可写 isDark」的写法（`isDark.value = !isDark.value`）→ 给只读 ComputedRef 赋值 → 报错。**
+
+证据链（`@actview/press@1.0.7` dist）：
+
+1. **报错点**（`dist/client/theme-default/components/VPSwitchAppearance.js:9`）：
+   ```js
+   const { isDark, theme } = useData();
+   const toggleAppearance = () => {
+       isDark.value = !isDark.value;   // ← 给 isDark.value 赋值
+   };
+   ```
+2. **`isDark` 是只读 ComputedRef**（`dist/client/app/data.js` 的 `useDark()`）：
+   ```js
+   const preference = ref(stored ?? initialValue);
+   const preferredDark = usePreferredDark();
+   const isDark = computed(() =>
+       preference.value === 'dark' ||
+       (preference.value === 'auto' && preferredDark.value));   // ← 只有 getter！
+   ...
+   return isDark;
+   ```
+3. **ActView core 的 `computed` 只支持 getter**：`@actview/core` 的 `computed.ts` 签名为 `function computed<T>(getter: () => T): ComputedRef<T>`，**没有可写 computed（`{ get, set }` 对象形式）**。
+
+### 触发条件与影响
+
+- 所有带外观切换按钮的页面，点击即崩（dev 与 build 产物一致）；
+- 与具体文档内容无关。
+
+### 修复方向建议
+
+在 ActPress 侧修复（文档站无代码可改）：
+1. `toggleAppearance` 改为写 `preference`（如 `preference.value = isDark.value ? 'light' : 'dark'`），而不是写只读的 `isDark.value`；
+2. 或让 `useDark` 返回带 `setAppearance(v)` 的对象，由 `toggleAppearance` 调用；
+3. 或为 ActView 的 `computed` 增加可写形式支持（框架 API 扩展，改动更大）。
+
+### 修复验证（@actview/press 1.0.8）
+
+依赖升级到 `1.0.8` 后检查 dist：
+
+- ✅ `VPSwitchAppearance` 的 `toggleAppearance` 改为调用 `setAppearance(isDark.value ? 'light' : 'dark')`，**不再直接写只读的 `isDark.value`**；
+- ✅ `useDark()` 新增 `setAppearance(value)`：写底层 `preference.value` 并持久化 `localStorage`，`useData()` 返回 `{ isDark, setAppearance }`；
+- ✅ 源码注释明确引用本 Bug（"Cannot set property value ... only a getter"，Bug #3）；
+- ✅ `pnpm build` 无 `Circular chunk` 警告、`pnpm preview` 冒烟 HTTP 200。
+
+---
+
+## Bug #4：生产构建下页面「在线体验」组件交互全部失效（`@actview/core` 双实例）
+
+- **状态**：已定位（未修复）
+- **涉及**：`@actview/core` 版本不一致 → rollup 打包双实例；文档站依赖解析
+- **发现版本**：`@actview/press` 1.0.8 + 项目根 `@actview/core@1.0.19`（press 内部 `@actview/core@1.0.18`）
+
+### 问题出现场景
+
+1. `pnpm build` + `pnpm preview`（或部署到 GitHub Pages）后打开页面；
+2. 操作任意「在线体验」组件（`examples/*.md` 中 `<script lang="tsx">` 的真实组件）：
+   - `examples/counter`：点击 `+1` 无反应；
+   - `examples/todo-list`：添加任务无反应；
+   - `examples/component-props`：输入框修改 `name`，`GreetCard` 不更新；
+3. 控制台**无任何报错**，但 UI 不随状态变化更新；
+4. 同一页面 `pnpm dev` 下一切正常；主题切换按钮（theme chunk）正常。
+
+### 现象要点
+
+- 仅**生产构建产物**出现（dev 正常）；
+- **所有**页面在线体验组件的交互都失效（非某个页面特有）；
+- 无报错——事件处理器执行了（状态确实被修改），但**触发不了重渲染**；
+- 主题组件（`VPSwitchAppearance` 等，位于 theme/framework chunk）事件正常。
+
+### 根因（含证据）
+
+核心：**`@actview/core` 在生产构建中被打包成两份（双实例）——项目根依赖与 `@actview/press` 内部依赖版本不一致，页面组件用的响应式系统与框架负责挂载/调度的响应式系统不是同一份，`track`/`trigger` 跨副本断链。**
+
+证据链（playwright 真实浏览器实测 + 产物分析）：
+
+1. **实测对照**：
+
+   | 环境 | 行为 |
+   | --- | --- |
+   | `pnpm dev` | 正常（输入 name，GreetCard 立即更新） |
+   | `pnpm build` + preview | 全部在线体验组件交互失效，无报错 |
+   | preview 下主题切换按钮 | 正常（可切换 dark） |
+
+2. **版本不一致**（`readlink` 实测）：
+   - 项目根：`node_modules/@actview/core` → `@actview/core@1.0.19`（页面模块 `import { ref } from 'actview'` 用）
+   - `@actview/press@1.0.8` 内部：`node_modules/.pnpm/@actview+press@1.0.8.../node_modules/@actview/core` → `@actview/core@1.0.18`
+
+3. **双副本 chunk**（build 产物 `assets/chunks/`）：
+   - `index.*.js`（4KB）：内联完整响应式实现副本——`ref`、`computed`、`reactive` 代理、`targetMap`、`track`、`trigger`、`activeEffect`、`defineComponent`；
+   - `framework.*.js`（31KB）：另一份 core 实现——`mountComponent`、`patchEvent`/`_vei`、`[actview]` 错误消息；
+   - 页面 chunk（`examples_*.md.*.js`）：`import { ref, defineComponent } from "./chunks/index.*.js"`（副本 A），其组件由 framework（副本 B）的 `mountComponent` 挂载。
+
+4. **断链机制**：
+   - 页面组件的 `ref()` 来自副本 A；组件 render effect 由副本 B 的 `runEffect` 创建（副本 B 的 `activeEffect`）；
+   - render 读取 `ref.value` → 副本 A 的 `track` 读副本 A 的 `activeEffect` = null（活动 effect 在副本 B）→ **依赖收集失败**；
+   - 点击/输入 → 副本 A 的 `trigger` → 副本 A 的 `targetMap` 无依赖 → 不重渲染 → 交互无效且无报错。
+
+5. **dev 正常的原因**：vite dev 的 `optimizeDeps` 预构建把 `actview`/`@actview/core` 统一解析为项目根版本（1.0.19）单份产物，页面与主题共享同一实例。
+
+### 触发条件与影响
+
+- 项目根 `@actview/core` 版本与 `@actview/press` 内部依赖版本不一致时必现（当前 `^1.0.18` 解析到 1.0.19 vs press 锁定 1.0.18）；
+- 影响：生产部署（GitHub Pages）后所有在线体验组件不可交互。
+
+### 修复方向建议
+
+1. **版本对齐**：项目根 `@actview/core` 固定到与 `@actview/press` 依赖一致的版本，或升级 press 使其依赖范围覆盖根版本；
+2. `package.json` 加 `pnpm.overrides: { "@actview/core": "1.0.19" }` 强制单版本；
+3. 升级 `@actview/press`（若其依赖范围更新到与根一致）。
+
+### 修复验证（@actview/core 1.0.19 / actview 1.0.18）
+
+当前安装版本即修复版（npm 上 `@actview/core@1.0.19` 与 `actview@1.0.18` 同批发布，gitHead `700128c`）。实测验证：
+
+- 清空 `.vitepress/cache`（模拟「卸载重装后缓存失效的首次 dev」）→ `pnpm dev`；
+- 打开 `examples/counter` **立即点击 `+1`**：计数 `0 → 1`，交互正常 ✅；
+- 控制台无错误。
+
+---
+
+## Bug #5：文档站示例页的具名插槽（`<template slot="name">`）不生效
+
+- **状态**：已定位（未修复）
+- **涉及**：ActPress 文档站 markdown 页面的 `<script lang="tsx">` 编译管线（缺 `defineComponentPlugin` 转换）
+- **发现版本**：文档站全部版本（`@actview/press` 1.0.8）
+
+### 问题出现场景
+
+1. `examples/slot-panel.md` 的「在线体验」组件（`examples/slot-panel.md:30-35`）使用具名插槽：
+   ```tsx
+   <PanelDemo>
+     <template slot="title">📌 公告</template>
+     <p>这是一个面板示例…</p>
+     <button>操作</button>
+     <template slot="footer">底部信息 —— footer 具名插槽</template>
+   </PanelDemo>
+   ```
+2. 打开页面：**顶部插槽（title）与底部插槽（footer）都不生效**——header 显示兜底「（无标题）」、footer 为空，而插槽内容被渲染进了主体（children）区域。
+
+### 现象要点
+
+- 在线体验与 dev / build 环境均复现；
+- 普通 children（默认插槽）正常，仅**具名插槽**失效；
+- 真实 ActView 项目中（经 `@actview/plugin` 的 vite 插件编译）该写法正常——问题仅限文档站页面。
+
+### 根因（含证据）
+
+核心：**具名插槽的 `<template slot="name">` 依赖编译期 Babel 转换（`@actview/plugin` 的 `defineComponentPlugin`），但文档站 markdown 页面的 `<script lang="tsx">` 编译管线只做 JSX 转换，没有经过该插件——`<template slot>` 原样保留为原生元素，`props.slots` 始终为空。**
+
+证据链（dev 产物 + playwright 实测）：
+
+1. **编译产物**（`/examples/slot-panel.md` 模块）：
+   ```js
+   export const SlotDemo = defineComponent(function () {
+     return () => jsxs(PanelDemo, {
+       children: [
+         jsx("template", { slot: "title", children: "📌 公告" }),   // ← 未转换！
+         jsx("p", { class: "av-panel-text", ... }),
+         jsx("button", { ... }),
+         jsx("template", { slot: "footer", children: "底部信息…" }) // ← 未转换！
+       ]
+     });
+   });
+   ```
+   `<template slot="title">` 应被转换为 `slots: { title: () => … }`，但**原样保留**为 `jsx("template", { slot: "title", ... })`。
+
+2. **playwright 实测**（打开 `/examples/slot-panel`）：
+   - header 渲染为 `（无标题）`（`props.slots?.title?.()` 为 undefined 走兜底）；
+   - footer 渲染为 ``（空）；
+   - main 区域内容为 `📌 公告 这是一个面板示例…操作 底部信息 —— footer 具名插槽`——**template 元素被当普通 children 渲染**。
+
+3. **机制**：真实项目经 `actviewPlugin`（vite 插件 → Babel `defineComponentPlugin`）编译，`<template slot>` 在编译期转换为 `slots` prop；文档站页面的 `<script lang="tsx">` 由 ActPress 的 markdown 编译管线处理，**未接入 `defineComponentPlugin`**，因此 `props.slots` 恒为 undefined。
+
+### 触发条件与影响
+
+- 所有文档站示例页中使用 `<template slot="name">` 具名插槽的在线体验组件（当前为 `examples/slot-panel.md`）；
+- 默认插槽（children）不受影响。
+
+### 修复方向建议
+
+1. 在 ActPress 的 markdown `<script lang="tsx">` 编译管线中接入 `defineComponentPlugin`（或等价的 template-slot 转换）；
+2. 或文档站示例改用**函数 children 形式的作用域插槽**（`props.children?.()`）代替 `<template slot>` 语法（不依赖编译期转换）。
 
 ---
 

@@ -19,10 +19,10 @@ const fruitList = [
   '菠萝', '蓝莓', '柠檬', '石榴', '椰子'
 ]
 
-const keyword = ref('')
-const onlyLong = ref(false)
-
 export function SearchDemo() {
+  const keyword = ref('')
+  const onlyLong = ref(false)
+
   const filtered = computed(() => {
     const kw = keyword.value.trim().toLowerCase()
     return fruitList.filter((name) => {
