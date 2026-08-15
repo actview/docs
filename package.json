@@ -9,14 +9,14 @@
     "update:actview": "node scirpts/update-actview.js"
   },
   "devDependencies": {
-    "@actview/core": "^1.0.28",
-    "@actview/jsx": "^1.0.14",
-    "@actview/plugin-vite": "^1.0.16",
-    "@actview/plugin-scoped": "^1.0.1",
-    "@actview/press": "^1.0.17",
-    "@actview/router": "^1.0.12",
+    "@actview/core": "^1.0.30",
+    "@actview/jsx": "^1.0.16",
+    "@actview/plugin-vite": "^1.0.17",
+    "@actview/plugin-scoped": "^1.0.2",
+    "@actview/press": "^1.0.18",
+    "@actview/router": "^1.0.13",
     "@types/node": "^26.2.0",
-    "actview": "^1.0.27",
+    "actview": "^1.0.28",
     "markdown-it": "^14.3.0",
     "markdown-it-container": "^4.0.0",
     "typescript": "^7.0.2"
