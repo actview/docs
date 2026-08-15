@@ -46,6 +46,7 @@ export default defineConfig({
 
     sidebar: {
       '/guide/': { base: '/guide/', items: sidebarGuide() },
+      '/migration/': { base: '/migration/', items: sidebarMigration() },
       '/api/': { base: '/api/', items: sidebarApi() },
       '/examples/': { base: '/examples/', items: sidebarExamples() },
       '/blog/': { base: '/blog/', items: sidebarBlog() }
@@ -86,7 +87,7 @@ function nav(): DefaultTheme.NavItem[] {
     { text: '指南', link: '/guide/introduction', activeMatch: '/guide/' },
     { text: '示例', link: '/examples/', activeMatch: '/examples/' },
     { text: 'API 参考', link: '/api/reactivity-core', activeMatch: '/api/' },
-    { text: '迁移', link: '/guide/migration/from-react', activeMatch: '/guide/migration/' },
+    { text: '迁移', link: '/migration/from-react', activeMatch: '/migration/' },
     { text: '博客', link: '/blog/', activeMatch: '/blog/' }
   ]
 }
@@ -150,20 +151,25 @@ function sidebarGuide(): DefaultTheme.SidebarItem[] {
       ]
     },
     {
-      text: '从 React / Vue 迁移',
-      collapsed: false,
-      items: [
-        { text: '从 React 迁移', link: 'migration/from-react' },
-        { text: '从 Vue 迁移', link: 'migration/from-vue' }
-      ]
-    },
-    {
       text: '深入',
       collapsed: false,
       items: [
         { text: '渲染机制', link: 'in-depth/rendering-mechanism' },
         { text: '响应式原理', link: 'in-depth/reactivity-in-depth' },
         { text: '渲染函数与 JSX', link: 'in-depth/render-function' }
+      ]
+    }
+  ]
+}
+
+function sidebarMigration(): DefaultTheme.SidebarItem[] {
+  return [
+    {
+      text: '迁移',
+      collapsed: false,
+      items: [
+        { text: '从 React 迁移', link: 'from-react' },
+        { text: '从 Vue 迁移', link: 'from-vue' }
       ]
     }
   ]

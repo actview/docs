@@ -186,5 +186,5 @@ export function Counter() {
 ## 下一步
 
 - [从 React 迁移](./from-react)
-- [快速上手](../quick-start)
-- [响应式基础](../essentials/reactivity)
+- [快速上手](../guide/quick-start)
+- [响应式基础](../guide/essentials/reactivity)
