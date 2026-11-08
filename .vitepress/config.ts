@@ -8,10 +8,10 @@ export default defineConfig({
   title: 'ActView',
   description: '轻量级、响应式驱动的 JSX 框架',
 
-  // GitHub Actions 构建（部署到 GitHub Pages 子路径）时使用 /actview-docs/，
+  // GitHub Actions 构建（部署到 GitHub Pages 子路径）时使用 /docs/，
   // 本地 dev/build 保持根路径
   // @ts-ignore
-  base: process.env.GITHUB_ACTIONS ? '/actview-docs/' : '/',
+  base: process.env.GITHUB_ACTIONS ? '/docs/' : '/',
 
   // plan.md / docs/ 是项目内部文档，不作为站点页面编译
   srcExclude: ['plan.md', 'docs/**'],
