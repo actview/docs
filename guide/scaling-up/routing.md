@@ -143,13 +143,80 @@ export function App() {
 }
 ```
 
-## 当前限制
+## 导航守卫
 
-`@actview/router` 是仿 Vue Router 的**最小实现**，没有以下能力：
+```tsx
+// 全局前置守卫：返回 false 取消导航，返回 { path } 重定向
+router.beforeEach((to, from) => {
+  if (to.path === '/admin' && !isLoggedIn.value) return '/login'
+})
 
-- 路由守卫（beforeEach 等）——可在组件内用 `watch(currentRouter.currentRoute, …)` 代替；
-- 路由级懒加载——用 `lazy()` + `Suspense` 包裹组件实现；
-- 嵌套路由 / 命名路由 / 重定向 / 别名。
+// 全局后置钩子
+router.afterEach((to) => {
+  document.title = `${to.path} - 我的站点`
+})
+```
+
+路由级守卫用 `beforeEnter`：
+
+```tsx
+routes: [
+  { path: '/admin', component: AdminPage, beforeEnter: () => isLoggedIn.value || '/login' }
+]
+```
+
+## 嵌套路由
+
+用 `children` 定义嵌套路由，父组件里放嵌套 `<RouterView />`：
+
+```tsx
+routes: [
+  {
+    path: '/user/:id',
+    component: UserLayout,
+    children: [
+      { path: 'profile', component: UserProfile },
+      { path: 'posts', component: UserPosts }
+    ]
+  }
+]
+```
+
+```tsx
+// UserLayout 里嵌套 RouterView，渲染 children 匹配的子组件
+export function UserLayout(props: { params: Record<string, string> }) {
+  return (
+    <div>
+      <p>用户：{props.params.id}</p>
+      <RouterView />
+    </div>
+  )
+}
+```
+
+## 懒加载
+
+`component` 为函数时按需加载，配合 `<Suspense>` 显示 fallback：
+
+```tsx
+routes: [
+  { path: '/heavy', component: () => import('./HeavyPage') }
+]
+```
+
+```tsx
+<Suspense fallback={<p>加载中…</p>}>
+  <RouterView />
+</Suspense>
+```
+
+## 重定向
+
+```tsx
+routes: [
+  { path: '/old', redirect: '/new' }
+]
+```
 
 ## 下一步
 

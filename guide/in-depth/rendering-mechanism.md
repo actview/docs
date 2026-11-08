@@ -93,8 +93,7 @@ props 用**普通对象**，由父组件显式调度更新（这是关键设计�
 ```
 1. 创建实例：props 拷贝为普通对象，scope = new EffectScope()
 2. setCurrentInstance(instance) → setup(props) → 返回 render
-3. update()：render() → mergeAttrsToRoot（attribute fallthrough）
-              → patch(旧子树, 新子树) → 触发 updated / mounted
+3. update()：render() → patch(旧子树, 新子树) → 触发 updated / mounted
 4. runEffect(update, { scheduler: queueJob }) → 立即执行首次挂载
 5. invokeHooks(mounted)
 ```

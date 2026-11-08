@@ -116,9 +116,16 @@ export function Timer() {
 }
 ```
 
-## Attribute Fallthrough
+## 透传 props（显式 `{...props}`）
 
-给组件传入的 `class` / `className` / `style` / `id` 以及 `on*` 事件，会自动透传给组件的**单根元素**（对齐 Vue 的单根语义）：
+组件收到的 props **全量**进入 `setup`（`key` / `ref` 除外，`children` 在 `props.children`）。框架**不自动透传**——要把 `class` / `style` 等落到根元素，用 JSX 展开 `{...props}`：
+
+```tsx
+// src/HelloButton.tsx
+export function HelloButton(props: any) {
+  return <button {...props}>点我</button>
+}
+```
 
 ```tsx
 <HelloButton class="big-button" style={{ marginTop: '8px' }} />
@@ -126,12 +133,18 @@ export function Timer() {
 
 规则：
 
-- 仅单根生效：组件返回 Fragment（多根）时不透传；
-- `class`：与根元素已有 class 拼接合并；
-- `style`：与根元素已有 style 浅合并（根元素声明优先）；
-- `on*` 事件与 `id`：根元素已显式声明时以根元素为准，否则透传。
+- **不显式 `{...props}`，class/style 不落到根元素**（这是刻意设计：落点是用户显式行为）；
+- class 拼接需要手动处理：
 
-业务 props（如 `label`、`items`）**不会**透传到 DOM——只作为组件参数使用。
+```tsx
+export function Btn({ class: cls, ...rest }: any) {
+  return <button class={['btn', cls].filter(Boolean).join(' ')} {...rest}>点我</button>
+}
+```
+
+- `key` / `ref` 是特殊属性，不进 `props`（`ref` 走模板引用回调）。
+
+> 之前（旧版本）有「Attribute Fallthrough 自动透传」，现已移除——对齐 React 的显式透传语义，数据流更清晰、条件渲染/Fragment 多根不再有「根元素识别」问题。
 
 ## 下一步
 

@@ -1,17 +1,24 @@
 ---
-description: 组件生命周期钩子：onMounted / onUpdated / onBeforeUnmount / onUnmounted。
+description: 组件生命周期钩子：onBeforeMount / onMounted / onUpdated / onBeforeUnmount / onUnmounted 等。
 ---
 
 # 生命周期 {#lifecycle}
 
-ActView 提供 4 个生命周期钩子：
+ActView 提供 11 个生命周期钩子：
 
 | 钩子 | 触发时机 |
 | --- | --- |
+| `onBeforeMount(fn)` | 组件首次渲染之前 |
 | `onMounted(fn)` | 组件首次渲染并挂载到 DOM 之后 |
 | `onUpdated(fn)` | 组件每次因响应式数据变化而重新渲染之后 |
 | `onBeforeUnmount(fn)` | 组件即将卸载、DOM 即将移除之前 |
 | `onUnmounted(fn)` | 组件卸载完成、effect 已停止之后 |
+| `onActivated(fn)` | KeepAlive 缓存组件被激活（从缓存恢复） |
+| `onDeactivated(fn)` | KeepAlive 缓存组件被移入缓存 |
+| `onErrorCaptured(fn)` | 捕获子组件渲染错误（返回 `false` 停止传播） |
+| `onServerPrefetch(fn)` | renderToString 阶段（SSR 数据预取） |
+| `onRenderTracked(fn)` | 调试：依赖收集时 |
+| `onRenderTriggered(fn)` | 调试：依赖触发重渲染时 |
 
 ## 注册钩子
 

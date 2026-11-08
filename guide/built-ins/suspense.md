@@ -42,6 +42,41 @@ export function App() {
 
 其中 `Header` / `Main` / `Footer` 都是 `lazy()` 创建的异步组件。
 
+## 异步 setup
+
+除了 `lazy()`，组件 `setup` 返回 `Promise<render>` 也会被 `Suspense` 捕获（top-level await）：
+
+```tsx
+import { defineComponent } from 'actview'
+
+const UserProfile = defineComponent(async function () {
+  const data = await fetch('/api/user').then((r) => r.json())
+  return () => <div>{data.name}</div>
+})
+
+export function App() {
+  return (
+    <Suspense fallback={<p>加载中…</p>}>
+      <UserProfile />
+    </Suspense>
+  )
+}
+```
+
+## 嵌套 Suspense
+
+内层 `Suspense` 独立显示自己的 fallback，互不干扰：
+
+```tsx
+<Suspense fallback={<p>外层加载中…</p>}>
+  <div>
+    <Suspense fallback={<p>内层加载中…</p>}>
+      <InnerAsync />
+    </Suspense>
+  </div>
+</Suspense>
+```
+
 ## 没有 Suspense 时
 
 `lazy` 组件在没有 `Suspense` 包裹时也可以工作：加载期间渲染 `null` 占位，加载完成后直接渲染真实组件——只是没有 loading 提示。

@@ -113,9 +113,9 @@ export function Greeting(props: { name?: string }) {
 }
 ```
 
-## 透传（Fallthrough）
+## 透传 props
 
-给组件传入的 `class` / `style` / `id` 与 `on*` 事件会透传到组件**单根元素**（见 [组件基础](./component-basics)）。业务 props（如上面的 `name`）只作为组件参数，不会出现在 DOM 上。
+组件收到的 props 全量进入 `setup`。要把 `class` / `style` / `on*` 等落到根元素，用 JSX 展开 `{...props}`（见 [组件基础](./component-basics)）——框架不自动透传。
 
 ## 下一步
 

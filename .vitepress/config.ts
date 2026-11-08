@@ -8,10 +8,10 @@ export default defineConfig({
   title: 'ActView',
   description: '轻量级、响应式驱动的 JSX 框架',
 
-  // GitHub Actions 构建（部署到 GitHub Pages 子路径）时使用 /actview-docs/，
+  // GitHub Actions 构建（部署到 GitHub Pages 子路径）时使用 /docs/，
   // 本地 dev/build 保持根路径
   // @ts-ignore
-  base: process.env.GITHUB_ACTIONS ? '/actview-docs/' : '/',
+  base: process.env.GITHUB_ACTIONS ? '/docs/' : '/',
 
   // plan.md / docs/ 是项目内部文档，不作为站点页面编译
   srcExclude: ['plan.md', 'docs/**'],
@@ -46,6 +46,7 @@ export default defineConfig({
 
     sidebar: {
       '/guide/': { base: '/guide/', items: sidebarGuide() },
+      '/migration/': { base: '/migration/', items: sidebarMigration() },
       '/api/': { base: '/api/', items: sidebarApi() },
       '/examples/': { base: '/examples/', items: sidebarExamples() },
       '/blog/': { base: '/blog/', items: sidebarBlog() }
@@ -86,6 +87,7 @@ function nav(): DefaultTheme.NavItem[] {
     { text: '指南', link: '/guide/introduction', activeMatch: '/guide/' },
     { text: '示例', link: '/examples/', activeMatch: '/examples/' },
     { text: 'API 参考', link: '/api/reactivity-core', activeMatch: '/api/' },
+    { text: '迁移', link: '/migration/from-react', activeMatch: '/migration/' },
     { text: '博客', link: '/blog/', activeMatch: '/blog/' }
   ]
 }
@@ -141,6 +143,9 @@ function sidebarGuide(): DefaultTheme.SidebarItem[] {
       collapsed: false,
       items: [
         { text: '路由', link: 'scaling-up/routing' },
+        { text: '状态管理', link: 'scaling-up/state-management' },
+        { text: '测试', link: 'scaling-up/testing' },
+        { text: 'DevTools', link: 'scaling-up/devtools' },
         { text: '服务端渲染', link: 'scaling-up/ssr' },
         { text: 'TypeScript', link: 'typescript' }
       ]
@@ -152,6 +157,19 @@ function sidebarGuide(): DefaultTheme.SidebarItem[] {
         { text: '渲染机制', link: 'in-depth/rendering-mechanism' },
         { text: '响应式原理', link: 'in-depth/reactivity-in-depth' },
         { text: '渲染函数与 JSX', link: 'in-depth/render-function' }
+      ]
+    }
+  ]
+}
+
+function sidebarMigration(): DefaultTheme.SidebarItem[] {
+  return [
+    {
+      text: '迁移',
+      collapsed: false,
+      items: [
+        { text: '从 React 迁移', link: 'from-react' },
+        { text: '从 Vue 迁移', link: 'from-vue' }
       ]
     }
   ]
@@ -183,6 +201,9 @@ function sidebarApi(): DefaultTheme.SidebarItem[] {
         { text: '渲染函数与 JSX', link: 'render-function' },
         { text: '服务端渲染', link: 'ssr' },
         { text: '路由', link: 'router' },
+        { text: '状态管理', link: 'store' },
+        { text: '测试工具', link: 'testing' },
+        { text: 'DevTools', link: 'devtools' },
         { text: '类型参考', link: 'utility-types' }
       ]
     }

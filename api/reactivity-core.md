@@ -54,6 +54,46 @@ unref(ref(1)) // 1
 unref(1)      // 1
 ```
 
+## toValue()
+
+取值统一：ref 取 `.value`，getter 函数调用，其余原样返回。
+
+```ts
+function toValue<T>(source: T | Ref<T> | (() => T)): T
+```
+
+```tsx
+import { toValue, ref } from 'actview'
+
+toValue(1)         // 1
+toValue(ref(1))    // 1
+toValue(() => 2)   // 2
+```
+
+## shallowRef()
+
+浅层 ref：对象值**不**深层包装，`.value` 整体替换才触发更新。
+
+```ts
+function shallowRef<T>(value: T): Ref<T>
+```
+
+```tsx
+import { shallowRef, triggerRef } from 'actview'
+
+const s = shallowRef({ n: 0 })
+s.value.n = 1     // 不触发（浅层）
+triggerRef(s)     // 手动触发依赖
+```
+
+## triggerRef()
+
+手动触发 ref 依赖（`shallowRef` 内部属性变化不自动触发时使用）。
+
+```ts
+function triggerRef(ref: Ref): void
+```
+
 ## reactive()
 
 深度响应式代理：普通对象与数组的嵌套结构均可响应。
@@ -69,6 +109,55 @@ const state = reactive({ count: 0, todos: [] })
 state.count++                          // 触发
 state.todos.push({ id: 1 })            // 数组变更方法触发
 reactive(state) === state              // 幂等：重复代理返回原代理
+```
+
+`reactive` 也支持 `Map` / `Set` / `WeakMap` / `WeakSet`：
+
+```tsx
+const map = reactive(new Map<string, number>())
+map.set('a', 1)    // 触发（size/forEach/迭代均响应）
+map.get('a')       // 1
+
+const set = reactive(new Set<number>())
+set.add(1)         // 触发
+set.has(1)         // true
+```
+
+## shallowReadonly()
+
+浅只读：仅第一层只读，嵌套可写。
+
+```ts
+function shallowReadonly<T extends object>(obj: T): Readonly<T>
+```
+
+```tsx
+import { shallowReadonly } from 'actview'
+
+const obj = shallowReadonly({ a: 1, nested: { b: 2 } })
+obj.a = 2          // 警告，不生效
+obj.nested.b = 3   // 可写（浅只读）
+```
+
+## 判型工具
+
+| API | 说明 |
+| --- | --- |
+| `toRaw(v)` | 递归取原始对象 |
+| `isReactive(v)` | 是否响应式代理（readonly(reactive) 也返回 true） |
+| `isReadonly(v)` | 是否只读代理 |
+| `isProxy(v)` | 是否响应式或只读代理 |
+| `isShallow(v)` | 是否浅层代理（shallowReactive/shallowRef/shallowReadonly） |
+
+```tsx
+import { reactive, readonly, toRaw, isReactive, isReadonly, isProxy } from 'actview'
+
+const raw = { a: 1 }
+const r = reactive(raw)
+toRaw(r) === raw        // true
+isReactive(r)           // true
+isReadonly(readonly(r)) // true
+isProxy(r)              // true
 ```
 
 ## shallowReactive()
@@ -145,7 +234,12 @@ total.value // 40（依赖变化后重算）
 function watch<T>(
   source: WatchSource<T> | WatchSource<T>[] | Array<Ref<any> | (() => any)>,
   cb: (newVal: any, oldVal: any, onCleanup: WatchCleanup) => void,
-  options?: { immediate?: boolean }
+  options?: {
+    immediate?: boolean          // 初始立即执行一次
+    deep?: boolean               // getter/ref 源深遍历；对象源默认 deep，deep:false 关闭
+    flush?: 'pre' | 'post' | 'sync'  // 默认 pre（微任务）
+    once?: boolean               // 回调只执行一次后自动 stop
+  }
 ): () => void
 ```
 
@@ -176,6 +270,23 @@ watch(id, async (newId, _old, onCleanup) => {
 })
 
 stop() // 停止侦听
+```
+
+## onWatcherCleanup()
+
+在 watch 回调执行期间注册清理函数（等价于回调第三参 `onCleanup`）。
+
+```ts
+function onWatcherCleanup(cleanupFn: () => void, failSilently?: boolean): void
+```
+
+```tsx
+import { watch, onWatcherCleanup } from 'actview'
+
+watch(() => state.id, () => {
+  onWatcherCleanup(() => console.log('清理上一次副作用'))
+  // ...
+})
 ```
 
 ## watchEffect()

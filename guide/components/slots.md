@@ -136,5 +136,5 @@ export function DataTable(props: any) {
 
 ## 下一步
 
-- [组件基础](./component-basics)：组件模型与 Attribute Fallthrough
+- [组件基础](./component-basics)：组件模型与 props 透传
 - [异步组件](./async)：`lazy` + `Suspense` 懒加载
